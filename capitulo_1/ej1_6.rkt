@@ -45,16 +45,20 @@
 (new-if (= 1 1) 0 5)
 ;0
 
+(define (average x y) 
+  (/ (+ x y) 2))
+  
+(define (improve guess x)
+  (average guess (/ x guess)))
+
 (define (good-enough? guess x)
   (< (abs (- (* guess guess) x)) 0.001))
-
-(define (improve guess x)
-  (/ (+ guess (/ x guess)) 2))
 
 (define (sqrt-iter guess x)
   (new-if (good-enough? guess x)
           guess
           (sqrt-iter (improve guess x) x)))
+
 (sqrt-iter 1 2)
 
 ;Cuando Alyssa trata de  usar el sqrt-iter, este entra en un bucle infinito. Esto sucede porque
