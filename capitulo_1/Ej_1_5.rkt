@@ -1,16 +1,13 @@
 #lang racket
-(define (p) (p))
+(define (p)  (p))
 
 (define (test x y) 
   (if (= x 0) 
       0 
       y))
 
-; Estos dos procedimientos nos sirven para conocer si el interprete que estamos usando usan orden aplicativo o normal de la siguiente forma:
-; El primer procedimiento es un bucle infinito ya que no hay ninguna condicion de parada
-; El segundo procedimiento es simplemente una condicion para ver si el primer argumento es 0 y devolver 0 si es verdadero o el segundo argumento si es falso
-; Estos dos procedimientos se relacionan con la siguiente expresion: (test 0 (p))
-; Con esta expresion, un interprete que usase un orden aplicativo de evaluacion deberia evaluar las dos variables y, tras evaluar (p), entraria en un bucle
-; infinito y no terminaria nunca. Por otro lado, si el interprete usase un orden normal de evaluacion, no evaluaria las variables hasta que no son necesarias
-; y, ya que para la condicion del if "(p)" no es necesaria, no se evaluaria nunca por lo que no habria bucle infinito y el procedimiento deberia acabar
-; mostrando por pantalla "0"
+;En la primera función se quedará "atascado" haciendo todo el rato lo mismo en bucle.
+;En la segunda se evaluará la condición y dependiendo de si se cumple se asigna  "0" o "y" si no se cumple.
+;El comportamiento que observará Ben al intentar evaluar la expresión (test 0 (p)) es el siguiente:
+;- Si en intérprete que usa orden aplicativo primero evaluaría el primer argumento y al intentar evaluar el segundo se quedaría atascado.
+;- Si el intérprete usa orden normal obtendríamos un 0 como resultado ya que primero se evalua la condicion, que se cumple, no necesita evaluar p.
