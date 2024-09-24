@@ -29,3 +29,11 @@ y luego se mutiplican ambos resultados y finalmente ese resultado se multiplica
 por 3, dando como resultado -60
 |#
 (* 3 (*(- 6  2)) (- 2 7))
+
+
+#|
+Tenía la duda de si las líneas suspensivas sería para indicar que es una división,
+por ello, también dejo escrita la división de estas 2 operaciones.
+|#
+
+(/(+ (+ 5 4) (- 2(- 3(+ 6(/ 4 5)))))(* 3 (*(- 6  2)) (- 2 7)))
