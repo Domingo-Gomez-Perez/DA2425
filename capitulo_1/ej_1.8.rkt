@@ -21,6 +21,7 @@ as an abstraction of these square-root and cube-root procedures.
 
 
 #|
+
 ; manera de conseguir la raiz cuadrada con el metodo de aproximacion
 (define (sqrt x)
   (sqrt-iter 1 x))
@@ -39,7 +40,7 @@ as an abstraction of these square-root and cube-root procedures.
 (define (improve guess x)
   (average guess (/ x guess)))
 
-;; Pruebas
+; Pruebas
 (sqrt 2)
 (sqrt 4)
 (sqrt 9)
