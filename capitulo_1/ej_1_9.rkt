@@ -81,7 +81,7 @@ Explicación método 2:
       b 
       (plus (dec a) (inc b))))
 
-Este método es recursivo porque realiza una llamada a sí mismo y pasa lo siguiente si (plus 6 7):
+Este método es iterativo porque actúa como un bucle:
 
 (if (= a 0) 7 (plus 5 8))
 (plus 4 9)
