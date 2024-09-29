@@ -16,7 +16,7 @@ Rewrite the `sqrt` procedure of section 1.1.7 and the
 `fixed-point` procedure of section 1.3.3 in terms of
 `iterative-improve`.
 |#
-;Versión sqrt
+;Versión sqrt con el uso de iterative-improve
 
 (define (good-enough? guess x)
   (< (abs (- x (* guess guess))) 0.001))
@@ -27,6 +27,7 @@ Rewrite the `sqrt` procedure of section 1.1.7 and the
 
 (define (average x y)
   (* 0.5 (+ x y)))
+
 (define (iterative-improve good-enough? improve)
   (lambda (guess x)
   (if(good-enough? guess x )                   
@@ -37,35 +38,85 @@ Rewrite the `sqrt` procedure of section 1.1.7 and the
   (iterative-improve good-enough? improve))
 
 (sqrt 1 6)
+
+;Otra versión sqrt con el uso de iterative-improve
+
+
+(define (iterative-improve-sqrt good-enough? improve)
+  (define (iter guess x)
+   
+  (if(good-enough? guess x )                   
+          guess                               
+          ((iterative-improve-sqrt good-enough? improve) (improve guess x) x)))
+ (lambda (guess x)
+  (iter guess x)))
+
+
+((iterative-improve-sqrt good-enough? improve)1 6)
+
 #|
-esto sería como llamar a la función improve  guess x, donde  la función improve se obtiene de l return de (iterative-improve good-enough? improve),
-(improve guess x) es el segundo argumento de improve y x es el ultimo
+((iterative-improve-sqrt good-enough? improve) (improve guess x) x))
+(iterative-improve-sqrt good-enough? improve) devuelve una función que toma como argumentos x y el resultado de (improve guess x) 
 
 |#
 
-
-
-;((iterative-improve good-enough? improve)1 6)
-
-
-;Versión fixed-point 
-
+((iterative-improve good-enough? improve)1 6)
 
 
 
 (define tolerance 0.00001)
-(define (fixed-point f first-guess)
-  (define (close-enough? v1 v2)
+(define (close-enough? v1 v2)
     (< (abs (- v1 v2)) 
        tolerance))
-  (define (try guess)
-    (let ((next (f guess)))
-      (if (close-enough? guess next)
+
+
+    
+;Version recursiva fixed-point
+(define (fixed-point f first-guess)
+      (let ((next (improve2 first-guess f)))
+      (if (close-enough? first-guess next)
           next
-          (try next))))
-  (try first-guess))
+          (fixed-point f next))))
 
-
+(define(improve2 guess f)
+(f guess))
 
 (fixed-point cos 1.0)
 
+;Versión recursiva fixed-poind con el uso de iterative-improve
+
+
+(define (iterative-improve-fixed close-enough?2 improve2)
+  (lambda (guess f)
+    (let ((next (improve2 guess f)))
+      (if (close-enough? guess next)
+          next
+          ((iterative-improve-fixed close-enough? improve2) next f)))))
+
+((iterative-improve-fixed close-enough? improve2)1.0 cos)
+
+;Otra versión fixed-point con el uso de iterative-improve
+
+(define (iterative-improve-fixed2 close-enough?2 improve2)
+  (define (iter2 guess f)
+    (let ((next (improve2 guess f)))
+      (if (close-enough? guess next)
+          next
+          (iter2 next f))))
+(lambda (guess f)
+(iter2 guess f)))
+
+#|Otra forma:
+(define (iter guess f)
+    (let ((next (improve2 guess f)))
+      (if (close-enough? guess next)
+          next
+          (iter next f))))
+
+
+(define (iterative-improve-fixed2 close-enough?2 improve2)
+  (lambda (guess f)
+  (iter guess f)))
+|#
+
+((iterative-improve-fixed2 close-enough? improve2)1.0 cos)
