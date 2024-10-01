@@ -1,7 +1,7 @@
 #lang racket
 
 #|
-Hecho por 
+Hecho por:
 EZQUERRA CEBALLOS, CARLOS
 FERNÁNDEZ RIVERA, CRISTIAN MANUEL
 GOMEZ GARCIA, GABRIEL
@@ -14,16 +14,15 @@ denominator are positive, and if the rational number is negative,
 only the numerator is negative.
 |#
 
-
-
 (define (make-rat n d)
-  (let ((g (gcd n d))
-        (num (/ n g)))
-        (den (/ d g))
-    cons(num)(den)))
+  (if (< d 0) 
+      (make-rat (* n -1) (* d -1)) 
+      (let ((g (gcd n d)))
+        (cons (/ n g) 
+              (/ d g)))))
 
 ; pruebas
-(make-rat 2 4) ; => '(1 . 2)
-(make-rat -2 4); => '(-1 . 2)
-(make-rat 2 -4); => '(-1 . 2)
-(make-rat -2 -4); => '(1 . 2)
+(make-rat 2 4)    ; => '(1 . 2)
+(make-rat -2 4)   ; => '(-1 . 2)
+(make-rat 2 -4)   ; => '(-1 . 2)
+(make-rat -2 -4)  ; => '(1 . 2)
