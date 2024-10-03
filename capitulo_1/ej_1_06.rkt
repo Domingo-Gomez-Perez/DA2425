@@ -36,8 +36,8 @@
 (sqrt-iter 3.1 9) ; Infinite recursion
 
 ; What happens when Alyssa attempts to use this to compute square roots?
-; Explain:
 
+; Explanation:
 
 ; sqrt-iter is a recursive function that attempts to compute the square root of x starting with an initial guess.
 ; It uses new-if to decide whether to return the current guess or to continue the iteration with an improved guess.

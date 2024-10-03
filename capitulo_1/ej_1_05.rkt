@@ -1,5 +1,7 @@
 #lang racket
 
+; Exercise 1.5
+
 ; Ben Bitdiddle has invented a test to determine whether the interpreter he is 
 ; faced with is using applicative-order evaluation or normal-order evaluation.
 ; He defines the following two procedures:
@@ -24,14 +26,14 @@
 ; expression.)
 
 
-; Applicative-order evaluation:
+; 1. Applicative-order evaluation:
 ; In applicative-order evaluation, the arguments to a procedure are evaluated before the procedure is applied.
 ; Therefore, when evaluating (test 0 (p)), the interpreter will first attempt to evaluate (p).
 ; Since (p) is defined as (p), this will result in an infinite loop or a stack overflow, as (p) will keep calling itself recursively without end.
 ; Thus, Ben will observe that the interpreter does not terminate and gets stuck in an infinite loop.
 
 
-; Normal-order evaluation:
+; 2. Normal-order evaluation:
 ; In normal-order evaluation, the arguments to a procedure are not evaluated until their values are needed.
 ; When evaluating (test 0 (p)), the interpreter will first evaluate the predicate (= x 0).
 ; Since x is 0, the predicate evaluates to true, and the interpreter will return 0 without ever evaluating (p).
