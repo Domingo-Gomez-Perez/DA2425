@@ -27,5 +27,12 @@
 ; (f 2)
 ; (2 2)
 
-; We can see that evaluating (f f) is the same as evaluating (2 2).
-; Indeed, if we evaluate both, the error is the same
+; We can see that evaluating (f f) is the same as evaluating (2 2). Indeed, if 
+; we evaluate both, the error is the sam due to we are trying to apply a number (2)
+; as a function.
+
+; Error:
+
+; application: not a procedure;
+;  expected a procedure that can be applied to arguments
+;  given: 2
