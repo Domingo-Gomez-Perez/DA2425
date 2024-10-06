@@ -226,14 +226,165 @@ pair5
 ; a direct definition of the addition procedure `+` (not in terms of
 ; repeated application of `add-1`).
 
+;; Numerales de Church
+(define zero (lambda (f) (lambda (x) x)))
+
+(define (add-1 n)
+  (lambda (f) (lambda (x) (f ((n f) x)))))
+
+(define one (lambda (f) (lambda (x) (f x))))
+
+(define two (lambda (f) (lambda (x) (f (f x)))))
+
+;; Suma de numerales de Church
+(define church-+ 
+  (lambda (m n)
+    (lambda (f)
+      (lambda (x)
+        ((m f) ((n f) x))))))
+
+;; Prueba de numerales Church
+(define (church-to-int n)
+  ((n (lambda (x) (+ x 1))) 0))
+
+;; Prueba de zero, one, y two sobre el procedimiento de duplicar
+(define (dup x) (* 2 x))
+
+;; Pruebas
+(display "Dup function with Church numerals:") (newline)
+(display "Dup applied 0 times: ") (display ((zero dup) 5)) (newline)  ;; Debería ser 5
+(display "Dup applied 1 time: ") (display ((one dup) 5)) (newline)    ;; Debería ser 10
+(display "Dup applied 2 times: ") (display ((two dup) 5)) (newline)   ;; Debería ser 20
+
+;; Pruebas de suma de numerales de Church
+(display "Church numerals sum test:") (newline)
+(display "Sum of zero and one: ") (display (church-to-int (church-+ zero one))) (newline) ;; Debería ser 1
+(display "Sum of one and one: ") (display (church-to-int (church-+ one one))) (newline)   ;; Debería ser 2
+(display "Sum of one and two: ") (display (church-to-int (church-+ one two))) (newline)   ;; Debería ser 3
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(display"\nExercise 2_17\n")
+
+; **Exercise 2.17:** Define a procedure
+; `last-pair` that returns the list that contains only the last element of a
+; given (nonempty) list:
+
+; ```
+; (last-pair (list 23 72 149 34))
+; (34)
+; ```
+
+(define (last-pair lst)
+  (if (null? (cdr lst))  ;; Si la cola es vacía, significa que es el último par.
+      lst               ;; Devolvemos este par (que contiene el último elemento).
+      (last-pair (cdr lst))))  ;; Si no es el último par, seguimos recursivamente.
+
+(last-pair (list 23 72 149 34))
+; (34)
+
+(last-pair (list 1 2 3 4 5 6 7 8 9 10 11 12))
+;; Resultado: '(12), comprobado
+
+(last-pair (list 4499))
+;; Resultado: '(4499)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(display"\nExercise 2_18\n")
+
+; **Exercise 2.18:** Define a procedure `reverse`
+; that takes a list as argument and returns a list of the same elements in
+; reverse order:
+
+; ```
+; (reverse (list 1 4 9 16 25))
+; (25 16 9 4 1)
+; ```
+
+(define (reverse lst)
+  (define (reverse-helper lst acc)
+    (if (null? lst)      ;; Si la lista está vacía, devolvemos el acumulador
+        acc              ;; que contiene la lista invertida.
+        (reverse-helper (cdr lst) (cons (car lst) acc))))  ;; Cons el primer elemento en el acumulador y sigue.
+  (reverse-helper lst '()))  ;; Llamada inicial con el acumulador vacío.
+
+(reverse (list 1 4 9 16 25))
+; (25 16 9 4 1), comprobado
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(display"\nExercise 2_20\n")
+
+; **Exercise 2.20:** The procedures `+`,
+; `*`, and `list` take arbitrary numbers of arguments. One way to
+; define such procedures is to use `define` with "dotted-tail notation".  
+; In a procedure definition, a parameter list that has a dot before
+; the last parameter name indicates that, when the procedure is called, the
+; initial parameters (if any) will have as values the initial arguments, as
+; usual, but the final parameter's value will be a `list` of any
+; remaining arguments.  For instance, given the definition
+
+; ```
+; (define (f x y . z) ⟨body⟩)
+; ```
+
+; the procedure `f` can be called with two or more arguments.  If we
+; evaluate
+
+; ```
+; (f 1 2 3 4 5 6)
+; ```
+
+; then in the body of `f`, `x` will be 1, `y` will be 2, and
+; `z` will be the list `(3 4 5 6)`.  Given the definition
+
+; ```
+; (define (g . w) ⟨body⟩)
+; ```
+
+; the procedure `g` can be called with zero or more arguments.  If we
+; evaluate
+
+; ```
+; (g 1 2 3 4 5 6)
+; ```
+
+; then in the body of `g`, `w` will be the list `(1 2 3 4 5 6)`.
+
+; Note: Dotted-tail notation is similar to the `*args` syntax in Python.  For example:
+
+; ```
+; def f(x, y, *z):
+;     ...
+; ```
+
+; Use this notation to write a procedure `same-parity` that takes one or
+; more integers and returns a list of all the arguments that have the same
+; even-odd parity as the first argument.  For example,
+
+; ```
+; (same-parity 1 2 3 4 5 6 7)
+; (1 3 5 7)
+
+; (same-parity 2 3 4 5 6 7)
+; (2 4 6)
+; ```
+
+(define (same-parity x . rest)
+  (define (same-parity-helper first lst)
+    (filter (lambda (n) (= (modulo n 2) (modulo first 2))) lst))
+  (cons x (same-parity-helper x rest)))
+
+(same-parity 1 2 3 4 5 6 7)
+;; Resultado: '(1 3 5 7)
+
+(same-parity 2 3 4 5 6 7)
+;; Resultado: '(2 4 6)
+
+;Comprobado 
 
 
-
-
-
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(display"\nExercise PROXXXXXXXXXXXXXXX\n")
 
 
 
