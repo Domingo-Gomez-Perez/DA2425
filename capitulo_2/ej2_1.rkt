@@ -27,7 +27,6 @@
   
   (define (normalize n d)
     (cond
-      [(and (< n 0) (< d 0)) (values (abs n) (abs d))]
       [(and (> n 0) (< d 0)) (values (- n) (abs d))]
       [(and (< n 0) (> d 0)) (values (-(abs n)) (abs d))]
       [else (values (abs n) (abs d))]))
@@ -59,6 +58,3 @@
 (car r4);3
 (cdr r4);4
 (display"\n")
-
-
-
