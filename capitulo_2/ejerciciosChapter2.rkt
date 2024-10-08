@@ -370,8 +370,8 @@ pair5
 ; ```
 
 (define (same-parity x . rest)
-  (define (same-parity-helper first lst)
-    (filter (lambda (n) (= (modulo n 2) (modulo first 2))) lst))
+  (define (same-parity-helper first1 lst20)
+    (filter (lambda (n) (= (modulo n 2) (modulo first1 2))) lst20))
   (cons x (same-parity-helper x rest)))
 
 (same-parity 1 2 3 4 5 6 7)
@@ -384,10 +384,453 @@ pair5
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(display"\nExercise PROXXXXXXXXXXXXXXX\n")
+
+(display "\nExercise 2_21\n")
+; **Exercise 2.21**: The procedure `square-list`
+; takes a list of numbers as argument and returns a list of the squares of those
+; numbers.
+
+; ```
+; (square-list (list 1 2 3 4))
+; (1 4 9 16)
+; ```
+
+; Here are two different definitions of `square-list`.  Complete both of
+; them by filling in the missing expressions:
+
+; ```
+; (define (square-list items)
+;   (if (null? items)
+;       nil
+;       (cons ⟨??⟩ ⟨??⟩)))
+
+; (define (square-list items)
+;   (map ⟨??⟩ ⟨??⟩))
+; ```
+
+
+(define (square x) (* x x))
+
+(define (square-list items)
+  (if (null? items)
+      null
+      (cons (square (car items))  ;; Calcular el cuadrado del primer elemento
+            (square-list (cdr items))))) ;; Llamar recursivamente al resto de la lista
+
+;; Otra definición usando `map`
+(define (square-list-using-map items)
+  (map square items))  ;; Aplicar la función `square` a cada elemento de la lista
+
+;; Ejemplo de uso
+(display "square-list: ")
+(display (square-list (list 1 2 3 4)))  ;; Debería mostrar (1 4 9 16)
+(newline)
+
+(display "square-list-using-map: ")
+(display (square-list-using-map (list 1 2 3 4)))  ;; Debería mostrar (1 4 9 16)
+(newline)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(display "\nExercise 2_22\n")
+; **Exercise 2.22**: Louis Reasoner tries to rewrite
+; the first `square-list` procedure of Exercise 2.21 so that it
+; evolves an iterative process:
+
+; ```
+; (define (square-list items)
+;   (define (iter things answer)
+;     (if (null? things)
+;         answer
+;         (iter (cdr things)
+;               (cons (square (car things))
+;                     answer))))
+;   (iter items nil))
+; ```
+
+; Unfortunately, defining `square-list` this way produces the answer list in
+; the reverse order of the one desired.  Why?
+
+;RESPUESTA: Se está dando la lista en el orden contrario porque el 
+;   proceso de construcción de la lista
+;   usa la función cons, que añade los nuevos elementos al inicio de la lista acumulada answer. 
+; En cada iteración, el resultado parcial (answer) 
+;   tiene los elementos cuadrados, pero los está agregando al frente, 
+;    lo que invierte el orden natural de los elementos.
+
+
+; Louis then tries to fix his bug by interchanging the arguments to `cons`:
+
+; ```
+; (define (square-list items)
+;   (define (iter things answer)
+;     (if (null? things)
+;         answer
+;         (iter (cdr things)
+;               (cons answer
+;                     (square 
+;                      (car things))))))
+;   (iter items nil))
+; ```
+
+; This doesn't work either.  Explain.
+
+;RESPUESTA: Este enfoque tampoco funciona correctamente porque ahora la expresión cons 
+;   está construyendo pares anidados, no una lista plana. En lugar de agregar el cuadrado 
+;   del elemento actual a la lista acumulada, 
+;   lo está combinando incorrectamente con answer como el primer argumento de cons.
+
+
+;Implementación correcta: 
+
+(define (map proc lst)
+  (cond
+    [(null? lst) '()]  ;; Si la lista está vacía, devolvemos la lista vacía.
+    [else (cons (proc (car lst)) (map proc (cdr lst)))]))  ;; Aplicamos la función y continuamos recursivamente.
+
+;Caso de ejemplo:
+(display "Aplicar la función cuadrado a (list 1 2 3 4): ")
+(display (map (lambda (x) (* x x)) (list 1 2 3 4)))  ;; Debería mostrar (1 4 9 16)
+(newline)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+; **Exercise 2.23:** The procedure `for-each` is
+; similar to `map`.  It takes as arguments a procedure and a list of
+; elements.  However, rather than forming a list of the results, `for-each`
+; just applies the procedure to each of the elements in turn, from left to right.
+; The values returned by applying the procedure to the elements are not used at
+; all---`for-each` is used with procedures that perform an action, such as
+; printing.  For example,
+
+; ```
+; (for-each 
+;  (lambda (x) (newline) (display x))
+;  (list 57 321 88))
+
+; 57
+; 321
+; 88
+; ```
+
+; The value returned by the call to `for-each` (not illustrated above) can
+; be something arbitrary, such as true.  Give an implementation of
+; `for-each`.
+
+(define (for-each proc lst)
+  (if (null? lst)
+      (printf"\n")  ; Retorna algo arbitrario, por ejemplo `#t`
+      (begin
+        (proc (car lst))  ; Aplica el procedimiento al primer elemento de la lista
+        (for-each proc (cdr lst)))))  ; Llama recursivamente para procesar el resto de la lista
+
+(for-each 
+ (lambda (x) (newline) (display x))
+ (list 57 321 88))
+
+; Salida:
+; 57
+; 321
+; 88
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(display "\nExercise 2_25\n")
+
+; **Exercise 2.25:** Give combinations of `car`s
+; and `cdr`s that will pick 7 from each of the following lists:
+
+; ```
+; (1 3 (5 7) 9)
+; ((7))
+; (1 (2 (3 (4 (5 (6 7))))))
+; ```
+
+(car (cdr (car (cdr (cdr '(1 3 (5 7) 9))))))
+;(car (cdr (car (cdr (3 (5 7) 9)))))
+;(car (cdr (car (5 7) 9)))
+;(car (cdr (5 7)))
+;(car 7)
+;7
+
+(car (car '((7))))
+;(car (7))
+;(7)
+
+(car (cdr (car (cdr (car (cdr (car (cdr (car (cdr (car (cdr '(1 (2 (3 (4 (5 (6 7))))))))))))))))))
+;primer cdr: Selecciona el segundo elemento de la entrada (en este caso la entrada es [1, listaX])
+;primer car: Selecciona el primer elemento de la listaX
+; .
+; .
+; .
+;(car (cdr (car '((6 7)))))
+;(car (cdr '(6 7)))
+;(car '(7))
+;(7)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(display "\nExercise 2_26\n")
+; **Exercise 2.26:** Suppose we define `x` and `y` to be two lists:
+
+; ```
+; (define x (list 1 2 3))
+; (define y (list 4 5 6))
+; ```
+
+; What result is printed by the interpreter in response to evaluating each of the
+; following expressions:
+
+; ```
+; (append x y)
+; (cons x y)
+; (list x y)
+; ```
+
+
+(define x (list 1 2 3))
+(define y (list 4 5 6))
+
+(append x y)
+(cons x y)
+(list x y)
+
+
+; (append x y) → (1 2 3 4 5 6)
+; (cons x y) → ((1 2 3) 4 5 6)
+; (list x y) → ((1 2 3) (4 5 6))
 
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(display"\nExercise 2.27")
+
+; **Exercise 2.27:** Modify your `reverse`
+; procedure of Exercise 2.18 to produce a `deep-reverse` procedure
+; that takes a list as argument and returns as its value the list with its
+; elements reversed and with all sublists deep-reversed as well.  For example,
+
+; ```
+; (define x 
+;   (list (list 1 2) (list 3 4)))
+
+; x
+; ((1 2) (3 4))
+
+; (reverse x)
+; ((3 4) (1 2))
+
+; (deep-reverse x)
+; ((4 3) (2 1))
+; ```
+
+(define (deep-reverse lst)
+  (cond
+    [(null? lst) '()]  ;; Si la lista está vacía, devolvemos la lista vacía.
+    [else (append (deep-reverse (cdr lst)) 
+                  (list (if (list? (car lst)) 
+                             (deep-reverse (car lst)) 
+                             (car lst))))])) ;; Reversamos primero los elementos.
+
+(define x 
+  (list (list 1 2) (list 3 4)))
+
+; Imprimir la lista original
+x
+; Resultado: ((1 2) (3 4))
+
+; Imprimir el resultado de reverse
+(reverse x)
+; Resultado: ((3 4) (1 2))
+
+; Imprimir el resultado de deep-reverse
+(deep-reverse x)
+; Resultado: ((4 3) (2 1))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(display"\nExercise 2.28")
+
+; **Exercise 2.28:** Write a procedure `fringe`
+; that takes as argument a tree (represented as a list) and returns a list whose
+; elements are all the leaves of the tree arranged in left-to-right order.  For
+; example,
+
+; ```
+; (define x 
+;   (list (list 1 2) (list 3 4)))
+
+; (fringe x)
+; (1 2 3 4)
+
+; (fringe (list x x))
+; (1 2 3 4 1 2 3 4)
+; ```
+
+(define (fringe tree)
+  (cond
+    [(null? tree) '()]  ; Si el árbol está vacío, devuelve una lista vacía
+    [(not (list? (car tree)))  ; Si el primer elemento no es una lista
+     (cons (car tree) (fringe (cdr tree)))]  ; Agrega el elemento a la lista de hojas y continúa
+    [else  ; Si el primer elemento es una lista
+     (append (fringe (car tree)) (fringe (cdr tree)))]))  ; Recurre en el primer elemento y en el resto
+
+; Ejemplos de uso
+(define x 
+  (list (list 1 2) (list 3 4)))
+
+; Imprimir el resultado de fringe
+(fringe x)                   ; Resultado: (1 2 3 4)
+(fringe (list x x))         ; Resultado: (1 2 3 4 1 2 3 4)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(display"\nExercise 2.33")
+
+; **Exercise 2.33:** Fill in the missing expressions
+; to complete the following definitions of some basic list-manipulation
+; operations as accumulations:
+
+; ```
+; (define (map p sequence)
+;   (accumulate (lambda (x y) ⟨??⟩) 
+;               nil sequence))
+
+; (define (append seq1 seq2)
+;   (accumulate cons ⟨??⟩ ⟨??⟩))
+
+; (define (length sequence)
+;   (accumulate ⟨??⟩ 0 sequence))
+; ```
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(display"\nExercise 2.38")
+
+; **Exercise 2.38:**  The procedure `accumulate` is also known as `fold-right`, because it combines the first element of
+; the sequence with the result of combining all the elements to the right.  There
+; is also a `fold-left`, which is similar to `fold-right`, except that
+; it combines elements working in the opposite direction:
+
+; ```
+; (define (fold-left op initial sequence)
+;   (define (iter result rest)
+;     (if (null? rest)
+;         result
+;         (iter (op result (car rest))
+;               (cdr rest))))
+;   (iter initial sequence))
+; ```
+
+; What are the values of
+
+; ```
+; (fold-right / 1 (list 1 2 3))
+; (fold-left  / 1 (list 1 2 3))
+; (fold-right list nil (list 1 2 3))
+; (fold-left  list nil (list 1 2 3))
+; ```
+
+; Give a property that `op` should satisfy to guarantee that
+; `fold-right` and `fold-left` will produce the same values for any
+; sequence.
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(display"\nExercise 2.39")
+
+; **Exercise 2.39:** Complete the following
+; definitions of `reverse` (Exercise 2.18) in terms of
+; `fold-right` and `fold-left` from Exercise 2.38.
+
+; ```
+; (define (reverse sequence)
+;   (fold-right 
+;    (lambda (x y) ⟨??⟩) nil sequence))
+
+; (define (reverse sequence)
+;   (fold-left 
+;    (lambda (x y) ⟨??⟩) nil sequence))
+; ```
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(display"\nExercise 2.53")
+
+; **Exercise 2.53:** What would the interpreter print
+; in response to evaluating each of the following expressions?
+
+; ```
+; (list 'a 'b 'c)
+; (list (list 'george))
+; (cdr '((x1 x2) (y1 y2)))
+; (cadr '((x1 x2) (y1 y2)))
+; (pair? (car '(a short list)))
+; (memq 'red '((red shoes) (blue socks)))
+; (memq 'red '(red shoes blue socks))
+; ```
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(display"\nExercise 2.54")
+
+; **Exercise 2.54:** Two lists are said to be
+; `equal?` if they contain equal elements arranged in the same order.  For
+; example,
+
+; ```
+; (equal? '(this is a list) 
+;         '(this is a list))
+; ```
+
+; is true, but
+
+; ```
+; (equal? '(this is a list) 
+;         '(this (is a) list))
+; ```
+
+; is false.  To be more precise, we can define `equal?`  recursively in
+; terms of the basic `eq?` equality of symbols by saying that `a` and
+; `b` are `equal?` if they are both symbols and the symbols are
+; `eq?`, or if they are both lists such that `(car a)` is `equal?`
+; to `(car b)` and `(cdr a)` is `equal?` to `(cdr b)`.  Using
+; this idea, implement `equal?` as a procedure. (Note: This implementation
+; is only concerned with lists of symbols).
+
+; Note: In practice,
+; programmers use `equal?` to compare lists that contain numbers as well as
+; symbols.  Numbers are not considered to be symbols.  The question of whether
+; two numerically equal numbers (as tested by `=`) are also `eq?` is
+; highly implementation-dependent.  A better definition of `equal?` (such as
+; the one that comes as a primitive in Scheme) would also stipulate that if
+; `a` and `b` are both numbers, then `a` and `b` are
+; `equal?` if they are numerically equal.  Can you modify `(equal?)` to also
+; work with numbers?
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(display"\nExercise 2.55")
+; **Exercise 2.55:** Eva Lu Ator types to the
+; interpreter the expression
+
+; ```
+; (car ''abracadabra)
+; ```
+; To her surprise, the interpreter prints back `quote`.  Explain.
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(display"\nExercise 2.56")
+; **Exercise 2.56:**  Try to expand the `deriv` procedure to support exponents.  Please read the
+; exercise description in the online text (not repeated here due to mathematical typesetting).
 
 
 

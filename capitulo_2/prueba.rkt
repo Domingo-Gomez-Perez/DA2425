@@ -1,11 +1,28 @@
 #lang racket
 
-(define (cons x y)
-    (lambda (f) ( f x y)))
+(define (accumulate combiner null-value term a b)
+  (if (> a b)
+      null-value
+      (combiner (term a)
+                (accumulate combiner null-value term (add1 a) b))))
 
-(define (cdr x y) y)
-(define (car x y) x)
-((cons 1(cons 2(cons 3 null))) car);saca el 1
-(((cons 1(cons 2(cons 3 null))) cdr) car);saca el 2
-((((cons 1(cons 2(cons 3 null))) cdr) cdr) car);saca el 3
-(((((cons 1(cons 2(cons 3 null))) cdr) cdr) cdr) car); saca null
+(define (accumulate-iter combiner null-value term a b)
+  (define (iter a result)
+    (if (> a b)
+        result
+        (iter (add1 a) (combiner (term a) result))))
+  (iter a null-value))
+
+;; length usando accumulate
+(define (length sequence)
+  (accumulate (lambda (x y) (+ 1 y)) 0 (lambda (x) x) 0 (sub1 (length sequence))))
+
+;; append usando accumulate
+(define (appended seq1 seq2)
+  (accumulate cons seq2 (lambda (x) x) 0 (sub1 (length seq1))))
+
+;; map usando accumulate
+(define (map p sequence)
+  (accumulate (lambda (x y) (cons (p x) y)) empty (lambda (x) x) 0 (sub1 (length sequence))))
+
+
