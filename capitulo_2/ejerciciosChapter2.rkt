@@ -705,6 +705,27 @@ x
 ;   (accumulate ⟨??⟩ 0 sequence))
 ; ```
 
+(define (accumulate combiner null-value sequence)
+  (if (null? sequence)                  ; Si la secuencia es vacía
+      null-value                        ; Devuelve el valor nulo
+      (combiner (car sequence)         ; Aplica el combinador al primer elemento
+                 (accumulate combiner null-value (cdr sequence))))) ; Acumula el resto de la secuencia
+
+(define (map p sequence)
+  (accumulate (lambda (x y) (cons (p x) y)) 
+              null sequence))
+
+(define (append seq1 seq2)
+  (accumulate cons seq2 seq1))
+
+(define (length sequence)
+  (accumulate (lambda (x y) (+ 1 y)) 0 sequence))
+
+; Pruebas
+(map (lambda (x) (* 2 x)) '(1 2 3 4))     ; Resultado: (2 4 6 8)
+(append '(1 2 3) '(4 5 6))                 ; Resultado: (1 2 3 4 5 6)
+(length '(1 2 3 4 5))                      ; Resultado: 5
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -738,6 +759,31 @@ x
 ; `fold-right` and `fold-left` will produce the same values for any
 ; sequence.
 
+(define (fold-right op initial sequence)
+  (if (null? sequence)
+      initial
+      (op (car sequence) (fold-right op initial (cdr sequence)))))
+
+
+(define (fold-left op initial sequence)
+  (define (iter result rest)
+    (if (null? rest)
+        result
+        (iter (op result (car rest))
+              (cdr rest))))
+  (iter initial sequence))
+
+  
+
+(fold-right / 1 (list 1 2 3))
+(fold-left  / 1 (list 1 2 3))
+(fold-right list null (list 1 2 3))
+(fold-left  list null (list 1 2 3))
+
+
+(fold-right + 0 (list 1 2 3)) ; Esto devolverá 6 (1 + 2 + 3)
+(fold-right list '() (list 1 2 3)) ; Esto devolverá (1 2 3)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (display"\nExercise 2.39")
@@ -756,7 +802,37 @@ x
 ;    (lambda (x y) ⟨??⟩) nil sequence))
 ; ```
 
+(define (fold-right op initial sequence)
+  (if (null? sequence)
+      initial
+      (op (car sequence) (fold-right op initial (cdr sequence)))))
 
+
+(define (fold-left op initial sequence)
+  (define (iter result rest)
+    (if (null? rest)
+        result
+        (iter (op result (car rest))
+              (cdr rest))))
+  (iter initial sequence))
+
+
+
+(define (reverse sequence)
+  (fold-right 
+   (lambda (x y) (cons x y)) ; Agrega x al frente de la lista y
+   null
+   sequence))
+
+(define (reverse2 sequence)
+  (fold-left 
+   (lambda (x y) (cons y x)) ; Agrega y al frente de la lista x
+   null 
+   sequence))
+
+(reverse (list 1 2 3 4)) ; Devolverá (1 2 3 4)
+
+(reverse2 (list 1 2 3 4)) ; Devolverá (4 3 2 1)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
