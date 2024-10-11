@@ -186,6 +186,12 @@ represent the pair `a` and `b` as the integer that is the product `2^a * 3^b`.
 Give the corresponding definitions of the procedures `cons`,
 `car`, and `cdr`.
 
+
+
+
+
+
+
 **Exercise 2.6:**
 In case representing pairs as
 procedures wasn't mind-boggling enough, consider that, in a language that can
