@@ -27,8 +27,12 @@
 (define (mult b n)
   (cond ((= n 0) 
          0)
+        ((= b 0)
+         0)
         ((= n 1)
          b)
+        ((= b 1)
+         n)
         ((even? n) 
          (mult (double b) (halve n)))
         (else 
