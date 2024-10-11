@@ -12,6 +12,25 @@ combines the first element of the sequence with the result of combining all the
 elements to the right. There is also a fold-left, which is similar to fold-right, 
 except that it combines elements working in the opposite direction:
 
+
+
+What are the values of:
+
+(fold-right / 1 (list 1 2 3))  VALOR: 1(1/2) esto esta mal PREGUNTAR POR QUE 
+(fold-right / 1 (list 1 2 3))  VALOR: 1/6
+(fold-right list null (list 1 2 3))   VALOR: (1 (2 (3 ())))
+(fold-left  list null (list 1 2 3))   VALOR: (((() 1) 2) 3)
+  
+Give a property that op should satisfy to guarantee that fold-right and fold-left 
+will produce the same values for any sequence.
+
+Para que fold-right y fold-left produzcan los mismos valores, es necesario que la operación
+sea "conmutativa", es decir, que de igual empezar por la derecha que por la izquierda. Esto
+es porque no es lo mismo "2/3" que "3/2"; sin embargo, si es lo mismo "1+2 que "2+1".
+Estos dos ejemplos: "(fold-right * 1 (list 1 2 3))" y "(fold-right * 1 (list 1 2 3))"
+si dan lo mismo, por su parte. 
+|# 
+
 (define (fold-left op initial sequence)
   (define (iter result rest)
     (if (null? rest)
@@ -20,13 +39,18 @@ except that it combines elements working in the opposite direction:
               (cdr rest))))
   (iter initial sequence))
 
-What are the values of:
-
-(fold-right / 1 (list 1 2 3))
-(fold-left  / 1 (list 1 2 3))
-(fold-right list nil (list 1 2 3))
-(fold-left  list nil (list 1 2 3))
-
-Give a property that op should satisfy to guarantee that fold-right and fold-left 
-will produce the same values for any sequence.
+#|
+La funcion accumulate pero llamada fold-right 
 |#
+(define (fold-right op initial sequence)
+  (if (null? sequence)
+      initial
+      (op (car sequence)
+          (fold-right op 
+                      initial 
+                      (cdr sequence)))))
+
+      
+
+
+

@@ -41,3 +41,26 @@ For example,
 (same-parity 2 3 4 5 6 7)
 (2 4 6)
 |#
+
+
+
+(define (same-parity x . elements)
+  (define (parity-match? n)          ;verifica si un número tiene la misma paridad que x.
+    (if (even? x) 
+        (even? n)
+        (odd? n)))
+  (define (same-parity-rec list)     ;función para añadir a una lista los que tienen la misma paridad que x
+    (if (null? list)
+        '()
+        (let ((first (car list))      ;con el let se definen 2 variables locales, first y rest, para ver si el primero tiene la misma paridad que x
+              (rest (cdr list)))
+          (if (parity-match? first)
+              (cons first (same-parity-rec rest))  ; si se cumple se agrega a la lista y se llama a la función nuevamente pero con el resto
+              (same-parity-rec rest)))))
+  (cons x (same-parity-rec elements)))
+
+
+;pruebas
+(same-parity 2 3 4 5 6)  ; => '(2 4 6)
+
+

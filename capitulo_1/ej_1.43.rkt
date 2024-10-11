@@ -24,12 +24,12 @@ integer n, and returns the procedure that computes the nth repeated application 
 ((repeated square 2) 5)    ; -> 625
 |#
 
+(define (repeated f n)
+  (if (= n 1)
+      f
+      (lambda (x) ((repeated f (- n 1)) (f x)))))
+
 (define (square x) (* x x))
 
-(define (repeated term a n)
-    (if = n 1)
-    term
-    (if > n 1)
-    (lambda (x) ((repeated term a (- n 1)) x a)))
-    
-((repeated square 2) 5) 
+; Ejemplo de uso
+((repeated square 2) 5)

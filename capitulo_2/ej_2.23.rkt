@@ -24,3 +24,13 @@ is used with procedures that perform an action, such as printing. For example,
 The value returned by the call to for-each (not illustrated above) can be something 
 arbitrary, such as true. Give an implementation of for-each.
 |#
+
+(define (for-each proc lst)
+  (if (null? lst)
+      #t                                    ; Se devuelve el valor arbitrario (verdadero) 
+      (let ((primer-elem (proc (car lst))))  ; Se aplica el procedimiento al primer elemento sin almacenar una lista
+        (for-each proc (cdr lst)))))  ; Llama recursivamente a for-each con el resto de la lista
+
+; pruebas
+(for-each (lambda (x) (newline) (display x)) (list 57 321 88)) ; => 57 321 88 #t
+(for-each (lambda (x) (* x x)) (list 1 2 3)) ; => #t

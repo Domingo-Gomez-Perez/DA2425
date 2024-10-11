@@ -33,5 +33,21 @@ Louis then tries to fix his bug by interchanging the arguments to cons:
                     (square 
                      (car things)))))
    (iter items nil)))
+
+
+
+Respuesta: El problema de la primera solución que da Louis es que el cons de la línea 18 agrega un elemento al frente de la lista,
+por lo que la lista queda en un orden inverso al deseado.
+
+En el segundo intento genera un error porque la función cons espera que su primer argumento sea un elemento y el segundo una lista,
+pero Louis está pasando answer (que es una lista) como el primer argumento, lo cual es incorrecto.
+
 |#
+
+
+
+
+
+
+
 

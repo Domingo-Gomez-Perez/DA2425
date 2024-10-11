@@ -34,3 +34,5 @@ cons, car, and cdr.
 (define punto (cons 2 3)) ; punto representaría (2, 3)
 (car punto) ; debería dar 2
 (cdr punto) ; debería dar 3
+
+

@@ -20,3 +20,47 @@ of some basic list-manipulation operations as accumulations:
 (define (length sequence)
   (accumulate ⟨??⟩ 0 sequence))
 |#
+
+; el accumulate para comprobar
+(define (accumulate op initial sequence)
+  (if (null? sequence)
+      initial
+      (op (car sequence)
+          (accumulate op 
+                      initial 
+                      (cdr sequence)))))
+
+; la longitud
+(define (length sequence)
+  (accumulate (lambda (x y) (+ 1 y)) 0 sequence))
+
+; el append (tiene quw ser primero seq2 porque se construye desde el final)
+(define (append seq1 seq2)
+  (accumulate cons seq2 seq1))
+
+; el map
+(define (map p sequence)
+  (accumulate (lambda (x y) (cons(p x) y)) 
+              null sequence))
+
+(define (reverse lst)
+  (define (reverse-iter lst acc)
+    (if (null? lst)
+        acc
+        (reverse-iter (cdr lst) (cons (car lst) acc))))
+  (reverse-iter lst '()))
+
+; el for
+(define (foreach sequence order)
+(accumulate (lambda (x y)(order x))
+  null sequence))
+
+
+
+(reverse (list 1 2 3 4))
+
+(foreach (list 1 2 3 4) display)
+
+(map (lambda (x) (* x x)) (list 1 2 3 4 5))
+
+
