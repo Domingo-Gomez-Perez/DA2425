@@ -636,7 +636,7 @@ pair5
                              (deep-reverse (car lst)) 
                              (car lst))))])) ;; Reversamos primero los elementos.
 
-(define x 
+(define x
   (list (list 1 2) (list 3 4)))
 
 ; Imprimir la lista original
