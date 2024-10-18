@@ -1,5 +1,5 @@
 ;EJERCICIO 1.1
-
+#lang racket
 10 ;10
 
 (+ 5 3 4) ;(+ 8 4)
@@ -194,9 +194,8 @@
         result                    
         (iter (next a) (+ result (term a)))))  
   (iter a 0))
-(define (iden n) n)
-(define (inc n) (+ n 1))
-
+(define (iden x) x)
+(define (inc x) (+ x 1))
 
 ;Ejemplo
 (sum iden 1 inc 7)  
@@ -227,20 +226,28 @@
 (define (iden n) n)
 (define (inc n) (+ n 1))
 
-(define (producto term a next b)
+
+(define (product term a next b)
   (define (iter a result)
     (if (> a b)
         result   
         (iter (next a) (* result (term a)))))  .
   (iter a 1)) 
 
+(define (factorial n)
+  (product iden 1 inc n))
+
+(product-pi 27)
+(factorial 5)
+
+
 ;Ejemplo
 (define (factorial n)
   (producto iden 1 inc n))
 
 ;EJERCICIO 1.32
-(define (iden n) n)
-(define (inc n) (+ n 1))
+(define (iden x) x)
+(define (inc x) (+ x 1))
 
 (define (accumulate combiner null-value term a next b)
   (if (> a b)
@@ -257,8 +264,8 @@
 (product iden 1 inc 7)
 
 ;EJERCICIO 1.32.b
-(define (iden n) n)
-(define (inc n) (+ n 1))
+(define (iden x) x)
+(define (inc x) (+ x 1))
 
 (define (acumulate combiner null-value term a next b)
   (define (iter a)
@@ -294,18 +301,17 @@
 
 ;EJERCICIO 1.41
 
-(define (inc n) (+ n 1))
+(define (inc x) (+ x 1))
 
 (define (double func)
   (lambda (x) (func (func x))))
 
-(define (inc n) (+ n 1))
 
 (((double (double double)) inc) 5)
 ;(5 + 2 ^ ((inc * 2)* 2)) = 21
 
 ;EJERCICIO 1.42
-(define (inc n) (+ n 1))
+(define (inc x) (+ x 1))
 
 (define (compose f g)
   (lambda (x)

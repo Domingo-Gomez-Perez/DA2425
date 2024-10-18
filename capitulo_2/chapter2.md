@@ -144,7 +144,7 @@ point can be represented as a pair of numbers: the `x` coordinate and the
 selectors `x-point` and `y-point` that define this representation.
 Finally, using your selectors and constructors, define a procedure
 `midpoint-segment` that takes a line segment as argument and returns its
-midpoint (the point whose coordinates are the average of the coordinates of the
+midpoint (the point whose coordin ates are the average of the coordinates of the
 endpoints).  To try your procedures, you'll need a way to print points:
 
 ```
@@ -516,7 +516,7 @@ and `cdr`s that will pick 7 from each of the following lists:
 (define x (list 1 2 3))
 (define y (list 4 5 6))
 ```
-
+  
 What result is printed by the interpreter in response to evaluating each of the
 following expressions:
 
@@ -697,7 +697,7 @@ work with a complicated parse tree structure.
 
 **Exercise 2.53:** What would the interpreter print
 in response to evaluating each of the following expressions?
-
+  
 ```
 (list 'a 'b 'c)
 (list (list 'george))
