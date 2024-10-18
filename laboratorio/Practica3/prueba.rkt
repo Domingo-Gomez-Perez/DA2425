@@ -13,7 +13,7 @@
 (string-split "20 0" " ") ; separar un string por un espacio
 (string->number "20") ; Convertir un string en un numero
 
-
 (define lista (call-with-input-file "ej_pts_01.txt" next-line-it))
 lista
 (car lista)
+
