@@ -1,0 +1,3 @@
+4.Siempre hay una linea vertical que dividida los puntos en 2.
+Viendo los puntos como una lista ordenada según la coordenada X,
+la manera de dividir los puntos en 2 partes iguales, es dividir la lista en 2 partes iguales.
