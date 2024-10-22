@@ -47,8 +47,16 @@
      (and (equal? (car a) (car b)) (equal? (cdr a) (cdr b))))
     (else #f)))                                 ; en cualquier otro caso, son diferentes
 
-
+(display "'(this is a list) == '(this is a list)\n")
 (equal? '(this is a list) '(this is a list)); devuelve #t.
+(display "'(this is a list) == '(this (is a) list)\n")
 (equal? '(this is a list) '(this (is a) list)); devuelve #f.
+(display "`(1 2 3) == '(1 2 3)\n")
 (equal? '(1 2 3) '(1 2 3)); devuelve #t.
+(display "`(1 2 3) == '(1 2 tree)\n")
 (equal? '(1 2 3) '(1 2 three)); devuelve #f
+(display "1 == 1\n")
+(equal? 1 1); devuelve #t.
+(display "1 == 2\n")
+(equal? 1 2); devuelve #f.
+; Ahora equal? funciona tambien para numeros y operaciones numericas

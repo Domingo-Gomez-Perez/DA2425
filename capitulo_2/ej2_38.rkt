@@ -44,12 +44,19 @@
 
   
 
-(fold-right / 1 (list 1 2 3))
-(fold-left  / 1 (list 1 2 3))
-(fold-right list null (list 1 2 3))
-(fold-left  list null (list 1 2 3))
+(fold-right / 1 (list 1 2 3)); Resultado = 3/2
+(fold-left  / 1 (list 1 2 3)); Resultado = 1/6
+(fold-right list null (list 1 2 3)); Resultado = '(1 (2 (3 ( ))))
+(fold-left  list null (list 1 2 3)); Resultado = '(((() 1) 2) 3)
 
 
-(fold-right + 0 (list 1 2 3)) ; Esto devolverá 6 (1 + 2 + 3)
+(fold-right + 0 (list 1 2 3)) ; Esto devolverá 6 ;(1 + 2 + 3)
 (fold-right list '() (list 1 2 3)) ; Esto devolverá (1 2 3)
 
+;Para que fold-right y fold-left produzcan el mismo resultado,
+; la operación op debe ser asociativa. Una operación es asociativa si el orden
+; en que se agrupan los operandos no afecta al resultado.
+;Por ejemplo, la suma (+) y la multiplicación (*) son operaciones asociativas:
+
+(fold-right + 3 (list 4 2 3)) ; Esto devolverá 12 ; LO HACE VVV
+(fold-left + 3 (list 4 2 3)) ; Esto devolverá 12 ; LO HACE VVV
