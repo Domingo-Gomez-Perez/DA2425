@@ -20,9 +20,9 @@ MUÑOZ FERNANDEZ, PAULA
       (list-ref (cdr lista) (- n 1))))  ; Si n > 0, avanzamos recursivamente con (cdr) y reducimos n.
 
 (define (length lista)
-    (if (null? lista)
-        0
-     (+ 1 (length (cdr lista)))))
+  (if (null? lista)
+      0
+      (+ 1 (length (cdr lista)))))
 
 (define (busca x ed)
   (busca-aux x ed 0 (length ed)))
@@ -31,10 +31,10 @@ MUÑOZ FERNANDEZ, PAULA
   (if (>= i j)
       -1
       (let ((m (quotient (+ i j -1) 2)))
-       (let ((elem (if (list? ed)
-                       (list-ref ed m)
-                       (vector-ref ed m))))
-        (cond ((= elem x) m)  ; si encontramos el elemento, retornamos el índice
+        (let ((elem (if (list? ed)
+                        (list-ref ed m)
+                        (vector-ref ed m))))
+          (cond ((= elem x) m)  ; si encontramos el elemento, retornamos el índice
                 ((< elem x) (busca-aux x ed (+ m 1) j))  ; buscar en la mitad superior
                 (else (busca-aux x ed i m)))))))  ; buscar en la mitad inferior
 
@@ -88,43 +88,53 @@ En total nos queda O(log2 n)^2.
 
 #|
 4  Aplicación del teorema maestro
-   El teorema maestro se puede aplicar a la complejidad temporal de la búsqueda por 
+   El teorema maestro se puede aplicar a la complejidad temporal de la búsqueda por
    bipartición, ya que esta operación tiene una estructura recursiva adecuada.
 
 
 Si, podemos aplicar el teorema maestro.
-T(n) = a T(n/b) + Θ(n^c)
-Donde:
-- a es el número de subproblemas
-- b es por cuánto se divide el tamaño del problema
-- Θ(n^c) es el coste de dividir el problema
+Para ello, habría que hallar los valores de a, b y f(n).
 
-Y las soluciones serían las siguientes:
-– Si a < bc, entonces T(n) es Θ(n^c)
-– Si a = bc, entonces T(n) es Θ(n^c log n)
-– Si a > bc, entonces T(n) es Θ(n^d), donde d = logb a
+En relación con el segundo apartado, se puede aplicar de la siguiente manera:
+  a = 1: Solo hay un subproblema.
+  b = 2: La longitud del problema es n / 2
+  f(n)= θ(1): El coste de dividir el problema es constante.
 
-En relación al segundo y al tercer apartado, se puede aplicar de la siguiente manera.
+Al aplicar el teorema, observamos que logb a = log2 1 = 0, y el coste f(n) = θ(1) = n^0.
+Esto nos lleva al segundo caso del teorema, donde f(n)= θ(n^(logb a) ) = θ(n^0 ).
+Por lo tanto, la complejidad temporal es:
+T(n)= θ(n^(log2 1) * log ⁡n )= θ(log ⁡n)
 
-Para ello, analizamos los valores de las variables a, b y c.
-a = 1 (solo hay un subproblema)
-b = 2 (la longitud del subproblema es n/2)
-c = 0
-O(n ^ c) = 1 (el coste de dividir el problema es constante)
+En relación con el tercer apartado, se puede aplicar de la siguiente manera:
+  a = 1: Solo hay un subproblema.
+  b = 2: La longitud del problema es n / 2
+  f(n)= θ(log ⁡n): El coste de dividir el problema implica comparar números de θ(log ⁡n) bits.
 
-Por lo tanto, nos encontramos ante el segundo caso del teorema maestro donde 
-si a = b^c (1 = 1), entonces T(n) es Θ(n^c log n). Por lo tanto, la complejidad temporal es Θ(log n).
-
+Al aplicar el teorema, observamos que logb a = log2 1 = 0, pero en este caso f(n) = θ(log ⁡n), siendo mayor que n^0 = 1.
+Por ello, nos encontramos ante el tercer caso del teorema, donde f(n) = Ω(n^(log2 1) ) y
+se cumple la condición de regularidad (es decir, a * f(⌈n/b⌉) ≤ c * f(n) para algún c < 1).
+Por lo tanto, el coste total está dominado por f(n), y la complejidad es:
+T(n)= θ(log ⁡n )* θ(log ⁡n) = θ(log^2 ⁡n)
 |#
 
 
 #|
 5  Versión iterativa del algoritmo de búsqueda por bipartición
-   (definir el código aquí)
+aunque se llame a el mismo, funciona como iterativo realmente.
 |#
 
 
-
+(define (busca-iter x lista)
+  (define (aux i j)
+    (if (> i j)
+        -1  ; Elemento no encontrado
+        (let* ((medio (quotient (+ i j) 2))  ; Índice medio
+               (valor-medio (list-ref lista medio)))
+          (cond
+            ((= valor-medio x) medio)  ; Elemento encontrado
+            ((< valor-medio x) (aux (+ medio 1) j))  ; Ignorar mitad izquierda
+            (else (aux i (- medio 1)))))))  ; Ignorar mitad derecha
+  (aux 0 (- (length lista) 1)))
 
 
 
@@ -132,32 +142,56 @@ si a = b^c (1 = 1), entonces T(n) es Θ(n^c log n). Por lo tanto, la complejidad
 
 (define lista-ordenada (list 1 3 5 7 9 11 13))
 (define lista-ordenada2 (list 2))
-(define lista-ordenada3 (list ))
+(define lista-ordenada3 (list))
 
 (let* ((resultado (busca 1 lista-ordenada))
-       (resultado2 (busca 1 lista-ordenada)))
+       (resultado2 (busca-iter 1 lista-ordenada)))
   (display (string-append (number->string resultado) " y " (number->string resultado2))) (newline))
 
 (let* ((resultado (busca 13 lista-ordenada))
-       (resultado2 (busca 13 lista-ordenada)))
+       (resultado2 (busca-iter 13 lista-ordenada)))
   (display (string-append (number->string resultado) " y " (number->string resultado2))) (newline))
 
 (let* ((resultado (busca 7 lista-ordenada))
-       (resultado2 (busca 7 lista-ordenada)))
+       (resultado2 (busca-iter 7 lista-ordenada)))
   (display (string-append (number->string resultado) " y " (number->string resultado2))) (newline))
 
 (let* ((resultado (busca 15 lista-ordenada))
-       (resultado2 (busca 15 lista-ordenada)))
+       (resultado2 (busca-iter 15 lista-ordenada)))
   (display (string-append (number->string resultado) " y " (number->string resultado2))) (newline))
 
 (let* ((resultado (busca 8 lista-ordenada))
-       (resultado2 (busca 8 lista-ordenada)))
+       (resultado2 (busca-iter 8 lista-ordenada)))
   (display (string-append (number->string resultado) " y " (number->string resultado2))) (newline))
 
 (let* ((resultado (busca 2 lista-ordenada3))
-       (resultado2 (busca 2 lista-ordenada3)))
+       (resultado2 (busca-iter 2 lista-ordenada3)))
   (display (string-append (number->string resultado) " y " (number->string resultado2))) (newline))
-  
+
 (let* ((resultado (busca 2 lista-ordenada2))
-       (resultado2 (busca 2 lista-ordenada2)))
-   (display (string-append (number->string resultado) " y " (number->string resultado2))) (newline))
+       (resultado2 (busca-iter 2 lista-ordenada2)))
+  (display (string-append (number->string resultado) " y " (number->string resultado2))) (newline))
+
+
+; PROGRAMAR EL WHILE EN SHEME (ejercicio extra 0.25 en el examen)
+
+(define (while test orden)
+  (if (test) ; Si la condición es verdadera
+      (begin
+        (orden) ; Ejecuta el cuerpo
+        (while test orden)) ; Llama recursivamente
+      (void))) ; Sale del bucle si la condición es falsa
+
+
+; prueba de que funciona
+(define contador 0)
+
+(define (test) (< contador 5))
+
+(define (orden)
+  (begin
+    (display contador) ; Muestra el contador
+    (newline)          ; Salto de línea
+    (set! contador (+ contador 1)))) ; Incrementa el contador
+
+(while test orden) ; Inicia el bucle

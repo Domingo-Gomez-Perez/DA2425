@@ -1,12 +1,12 @@
 #lang racket
 
-;Hecho por 
-; EZQUERRA CEBALLOS, CARLOS
-; FERNÁNDEZ RIVERA, CRISTIAN MANUEL
-; GOMEZ GARCIA, GABRIEL
-; MUÑOZ FERNANDEZ, PAULA
-
 #|
+Hecho por
+EZQUERRA CEBALLOS, CARLOS
+FERNÁNDEZ RIVERA, CRISTIAN MANUEL
+GOMEZ GARCIA, GABRIEL
+MUÑOZ FERNANDEZ, PAULA
+
 Exercise 1.5: Ben Bitdiddle has invented a test to determine whether the interpreter 
 he is faced with is using applicative-order evaluation or normal-order evaluation. 
 He defines the following two procedures:
@@ -30,12 +30,12 @@ Explain your answer.
  and the result determines whether to evaluate the consequent or the alternative expression.)
 |#
 
-; RESPUESTA
+
 
 #|
 Evaluación en Orden Aplicativa:
 Todos los argumentos se evalúan antes de aplicar la función. 
-Si un argumento lleva a un bucle infinito, como en (p), el intérprete nunca completa la evaluación y se queda atrapado en el bucle.
+Si un argumento lleva a un bucle infinito, como en y que lleva a (p), el intérprete nunca completa la evaluación y se queda atrapado en el bucle llamando a p.
 
 Evaluación en Orden Normal:
 Los argumentos se evalúan solo cuando son necesarios. 
