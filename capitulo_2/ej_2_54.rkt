@@ -64,6 +64,6 @@
 (equal-base? '(this () list) '(this (b a) list))     ; Should return #f
 
 ; Using numbers IS VALID, so ...
-(equal? '(this (4 b) list) '(this (4 b) list))  ; Should return #t
-(equal? '(this (4 b) list) '(this (5 b) list))  ; Should return #f
-(equal? 4 4)                                    ; Should return #t
+(equal? '(this (4 b) list) '(this (4 b) list))       ; Should return #t
+(equal? '(this (4 b) list) '(this (5 b) list))       ; Should return #f
+(equal? 4 4)                                         ; Should return #t
