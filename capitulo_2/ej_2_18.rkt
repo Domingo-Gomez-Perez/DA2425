@@ -31,3 +31,5 @@ n items?
 
 (reverse (list 1 4 9 16 25))
 
+(reverse (list 1 2 3(list 1 4 9 16)25))
+

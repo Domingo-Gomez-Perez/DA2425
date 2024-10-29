@@ -38,15 +38,17 @@ definitions of `reverse` (Exercise 2.18) in terms of
               (cdr rest))))
   (iter initial (reverse sequence)))
 
-
+;Apartado a
 (define (reverse1 sequence)
   (fold-right 
    (lambda (x y)  (append y (list x))) null sequence))
 
-
+;Apartado b
 (define (reverse2 sequence)
   (fold-left 
    (lambda (x y) (cons y x)) null sequence))
+
+
 
 (reverse1 (list 1 2 3))
 

@@ -42,7 +42,7 @@ works, make use of the substitution model of section 1.1.5)
 
 #|
 Lo que cdr hace, es devolver todos los elementos restantes de la lista excepto el inicial (es lo que devuelve la función car).
-Para ello, al llamar a ((cons 2 3) f), lo que sucedería al aplicar el método de substitución:
+Para ello, lo que sucede al llamar a ((cons 2 3) f) y al aplicar el método de substitución es:
 
 
 

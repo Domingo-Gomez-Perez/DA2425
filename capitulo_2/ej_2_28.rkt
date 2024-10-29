@@ -21,3 +21,39 @@ example,
 ```
 |#
 
+(define x 
+  (list (list 1 2) (list 3 4)))
+
+
+(define (length s)
+    (if (null? s)
+        0
+	(+ 1 (length (cdr s)))))
+
+
+
+(define (fringe lista)
+  (define (fringe-iter lista lista-rev)
+    (cond ((null? lista)
+        lista-rev)
+        
+        (else
+         (fringe-iter (cdr lista)
+                           
+                           (if (list? (car lista))
+                                                  (fringe-iter (car lista) lista-rev)
+                                                
+                                                 (append lista-rev (list (car lista))) )
+                                                  )
+        )
+        ))
+  
+  (fringe-iter lista null))
+              
+
+;ejemplos de uso
+(fringe (list 1 2 3(list 1 (list 5 11(list 3 0) 17)4 9 16) 13 25))
+
+(fringe x)
+
+(fringe (list x x))

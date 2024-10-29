@@ -19,20 +19,7 @@ operations as accumulations:
 ```
 |#
 
-(define (length2 s)
-    (if (null? s)
-        0
-	(+ 1 (length (cdr s)))))
 
-
-
-(define (reverse lista)
-  (define (reverse-iter lista lista-rev)
-    (if (= (length2 lista) 0)
-        lista-rev
-        (reverse-iter (cdr lista) (cons (car lista) lista-rev))
-        ))
-  (reverse-iter lista null))
 
 (define (accumulate op initial sequence)
   (if (null? sequence)
@@ -58,13 +45,22 @@ operations as accumulations:
               null sequence))
 
 
-(define (length sequence)
-  (accumulate (lambda (x y) (+ 1 y)) 0 sequence))
-
 (define (append seq1 seq2)
   (accumulate cons seq2 seq1))
 
+(define (length sequence)
+  (accumulate (lambda (x y) (+ 1 y)) 0 sequence))
+
+
+;ejemplo map
 (map sqr (list 1 2 3))
+
+;ejemplo sqr
+(append (list 1 9 3) (list 3 8 7))
+
+;ejemplo length
+(length (list 2 5 9 2))
+
 
 
 

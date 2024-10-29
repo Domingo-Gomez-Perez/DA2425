@@ -11,7 +11,7 @@ Give the corresponding definitions of the procedures `cons`,
 
 
 ;ir dividiendo entre 2 y entre 3 y en caso de que no se pueda dividir por ninguno en la primera iteracion, devuelve una lista (0,0)
-;además en cada iteración va aumentando a y b
+;además, en cada iteración van aumentando a y b
 (define (cons z)
   (define (cons-iter a b z)
     (cond
@@ -38,6 +38,7 @@ Give the corresponding definitions of the procedures `cons`,
       ((= (remainder z 3) 0) (cons-iter (+ b 1) (quotient z 3)))
       (else #f)))
   (cons-iter 0 z))
+
 
 
 (cons 23)

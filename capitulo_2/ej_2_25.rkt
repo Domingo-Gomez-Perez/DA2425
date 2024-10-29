@@ -31,6 +31,7 @@ and `cdr`s that will pick 7 from each of the following lists:
 ;Lista1
 (car(cdr(car(car(list(cdr(cdr lista1)))))))
 
+
 (display "Lista2" )
 (newline)
 ;Lista2

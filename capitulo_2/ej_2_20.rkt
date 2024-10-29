@@ -58,22 +58,6 @@ even-odd parity as the first argument.  For example,
 |#
 
 
- #|
-        (cond
-      ((even? (car numeros)) (same-iter (cdr numeros) (cons (car numeros) numeros-parity)))
-      (else (same-iter (cdr numeros) (cons (car numeros) numeros-parity))))|#
-
-
-
-(define (reverse lista)
-  (define (reverse-iter lista lista-rev)
-    (if (= (length lista) 0)
-        lista-rev
-        (reverse-iter (cdr lista) (cons (car lista) lista-rev))
-        ))
-  (reverse-iter lista null))
-
-
 (define (same-parity . numeros)
   (define (same-iter numeros numeros-parity parity)
     (if (= (length numeros) 0)
@@ -106,3 +90,5 @@ a la lista inicial pero en este caso se debe cumplir lo de la paridad.
 (same-parity 1 2 3 4 5 6 7)
 
 (same-parity 2 3 4 5 6 7)
+
+(same-parity 0 3 2 4)

@@ -32,18 +32,6 @@ sequence.
 
 
 
-(define (length s)
-    (if (null? s)
-        0
-	(+ 1 (length (cdr s)))))
-
-(define (last-pair lista)
-  (if (= (length lista) 1)
-      (car lista)
-      (last-pair (cdr lista)))
-  )
-
-
 (define (fold-left op initial sequence)
   (define (iter result rest)
     (if (null? rest)
@@ -169,8 +157,16 @@ Give a property that `op` should satisfy to guarantee that
 sequence:
 
 Para que las funciones `fold-right` y `fold-left` produzcan el mismo resultado para cualquier secuencia,
-lo que se debe hacer es aplicar operaciones asociativas como la suma y la multiplicación porque no importa empezar operando desde la izquierda
+se debe aplicar operaciones asociativas como la suma y la multiplicación porque no importa empezar operando desde la izquierda
 que empezar desde la derecha, cualquier agrupación va a dar el mismo resultado
 
 
 |#
+
+;Examples:
+
+(fold-left  + 1 (list 1 2 3))
+(fold-right  + 1 (list 1 2 3))
+
+(fold-left  * 1 (list 1 2 3))
+(fold-right  * 1 (list 1 2 3))
