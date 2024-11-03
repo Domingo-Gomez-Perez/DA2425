@@ -19,7 +19,7 @@
                          ))
 
 (define (expt b n p) (
-    if (= n 1)
+    if (= n 0)
        p
        (expt b (- n 1) (* b p))
                       ))

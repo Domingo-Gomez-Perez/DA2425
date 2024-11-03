@@ -25,7 +25,7 @@
 ; (inc (inc 7))
 ; (inc 8)
 ; 9
-; Este proceso es iterativo
+; Este proceso es recursivo
 
 (define (plus a b)
   (if (= a 0) 
