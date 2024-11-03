@@ -8,7 +8,7 @@
 (define (reverse lst)
     (if (null? lst)
         lst
-	(append (reverse (cdr lst)) (list (car lst)))))
+	      (append (reverse (cdr lst)) (list (car lst)))))
 
 ; Tests:
  (reverse (list 1 4 9 16 25)) ; Should return (25 16 9 4 1)
