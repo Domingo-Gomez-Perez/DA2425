@@ -1,5 +1,5 @@
 #lang racket
- (require math/statistics)
+(require math/statistics)
 
 (define (next-line-it file)
   (let ((line (read-line file 'any)))
