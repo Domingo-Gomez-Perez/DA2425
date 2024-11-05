@@ -18,9 +18,11 @@ fact = (
     ("lambda", ("n",), ("if", ("=", "n", 1), 1, ("*", "n", ("fact", ("-", "n", 1))))),
 )
 
+
 def pon_en_env(x, y):
     global env
     env[x] = y  # No evalúes el valor aquí, ya está evaluado.
+
 
 env = {
     "+": lambda x, y: x + y,
@@ -28,6 +30,7 @@ env = {
     "*": lambda x, y: x * y,
     "=": lambda x, y: x == y,
 }
+
 
 def hacer_funcion(argumentos, cuerpo):
     def funcion(*valores):
@@ -37,13 +40,17 @@ def hacer_funcion(argumentos, cuerpo):
         resultado = seval(cuerpo)  # Evalúa el cuerpo en el nuevo entorno
         env.update(old_env)  # Restaura el entorno original
         return resultado
+
     return funcion
+
 
 def seval(sexp):
     if isinstance(sexp, int):
         return sexp
     elif isinstance(sexp, str):
-        return env.get(sexp, sexp)  # Obtiene el valor del entorno o devuelve el símbolo.
+        return env.get(
+            sexp, sexp
+        )  # Obtiene el valor del entorno o devuelve el símbolo.
     elif isinstance(sexp, tuple):
         if sexp[0] == "if":
             condicion = seval(sexp[1])
@@ -51,7 +58,7 @@ def seval(sexp):
                 return seval(sexp[2])
             else:
                 return seval(sexp[3])
-            
+
         elif sexp[0] == "lambda":
             argumentos = sexp[1]
             cuerpo = sexp[2]
@@ -65,6 +72,7 @@ def seval(sexp):
             func = seval(sexp[0])  # Evalúa la función
             args = [seval(e) for e in sexp[1:]]  # Evalúa los argumentos
             return func(*args)
+
 
 # Pruebas básicas
 assert seval(42) == 42
