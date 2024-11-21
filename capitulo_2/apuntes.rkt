@@ -5,13 +5,13 @@
 
 ; EL 39 vale con el append en el fold right??
 
-; el special patterns
+; el special patterns (tiene que poder buscar, si es el simbolo jsuto hace cosas (intentar recuivo))
 
-; el special bindingç
+; el special binding (te tiene que decir la estructura completa y hay que pode buscar cada cosa)
 
-; el E
+; el E (es para hacer imports (hay que poner los defines dentro y usar los register y tal al general))
 
-; el F
+; el F (cosas de mensajes)
 
 #|
 Chapter 2 : Building Abstractions with Data

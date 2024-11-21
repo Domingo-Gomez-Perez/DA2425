@@ -73,6 +73,9 @@ Exercise 2.E: Put the generic "bob" and "alice" functions into their own namespa
   (register 'area 'bob-box bob-area)
 
   )
+  
+(import-bob-box)
+(import-alice-box)
 
 ; ahora creamos los genericos
 (define (width box)
@@ -84,15 +87,9 @@ Exercise 2.E: Put the generic "bob" and "alice" functions into their own namespa
 (define (area box)
   ((lookup 'area (type-tag box)) box))
 
-; Import boxes
-(define make-bob-box (import-bob-box))
-(define make-alice-box (import-alice-box))
-
-(import-bob-box)
-(import-alice-box)
 ; Now we can create boxes using the constructors
-(define a (make-alice-box 1 2 3 4))
-(define b (make-bob-box 1 2 3 4))
+(define a (alice-make-box 1 2 3 4))
+(define b (bob-make-box 1 2 3 4))
 
 ; Test the width, height, and area functions
 (display (width a))   ; -> 2

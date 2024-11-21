@@ -34,35 +34,26 @@ evaluate (add-1 zero)). Give a direct definition of the addition procedure +
 ; Si lo intentamos usar, vamos a ver que nos devuelve una funcion entonces para probar
 ; necesitamos una manera de volverlo numero
 
-(define (church-to-number cn)
-  (define (inc x) (+ x 1))
-  (cn inc) 0)
+(define (inc x) (+ x 1))
 
-(church-to-number add one)
-
-
-
-
-
-
-
-
-
+((two inc) 4)
 
 ; ; ahora hay que definir la suma +
 (define (add m n)
   (lambda (f) (lambda (x) ((m f) ((n f) x)))))
 
-; ; ; Función sucesor para incrementar un número de Church
-; (define (sucesor numero)
-;   (lambda (f)
-;     (lambda (x)
-;       (f ((numero f) x)))))
+(((add two two)inc)0)
+(((add three three)inc)0)
 
-; ; ; Ejemplo de función que incrementa un valor
-; (define (inc x) (+ x 1))
-; ; Prueba con el número two
-; (((sucesor (add one two)) inc) 0) ; Debería devolver 4
+(define (exp m n)
+  (lambda (f) (lambda (x) (((m n) f) x))))
 
+(define (mult m n)
+  (lambda (f) (lambda (x) ((m (n f)) x))))
+
+(newline)
+(((mult three three)inc)0)
 
 ;TAMBIEN HACER RESTA
+
+; hay que llevar el numero y el anterior para hacerlo
