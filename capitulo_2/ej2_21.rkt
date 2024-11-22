@@ -9,10 +9,6 @@
                       initial 
                       (cdr sequence)))))
 
-(define (map p sequence)
-  (accumulate (lambda (x y) (cons p x) y))
-                null sequence)
-                
 (define (square-list items)
   (if (null? items)
       null

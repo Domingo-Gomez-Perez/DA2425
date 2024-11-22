@@ -1,26 +1,16 @@
 #lang racket
-(define (square x) (* x x))
-
-(define (accumulate op initial sequence)
-  (if (null? sequence)
-      initial
-      (op (car sequence)
-          (accumulate op 
-                      initial 
-                      (cdr sequence)))))
+(define (accumulate combiner null-value sequence)
+  (if (null? sequence)                  
+      null-value                        
+      (combiner (car sequence)         
+                 (accumulate combiner null-value (cdr sequence))))) 
 
 (define (map p sequence)
   (accumulate (lambda (x y) (cons (p x) y)) 
               null sequence))
 
-(define (square-list items)
-  (if (null? items)
-      null
-      (cons (square (car items))    
-            (square-list (cdr items))))) ; Llamada recursiva al resto de la lista
+(define (append seq1 seq2)
+  (accumulate cons seq2 seq1))
 
-(define (square-list2 items)
-  (map square items))  ; Aplica la función square a cada elemento de items
-
-(square-list (list 1 2 3 4)) ; Debería devolver (1 4 9 16)
-(square-list2 (list 1 2 3 4)) ; Debería devolver (1 4 9 16)
+(define (length sequence)
+  (accumulate (lambda (x y) (+ 1 y)) 0 sequence))
