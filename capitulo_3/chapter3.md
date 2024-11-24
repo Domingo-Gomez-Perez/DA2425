@@ -155,11 +155,11 @@ If you introduce an internal dispatching function, you can make more complex obj
 (define (make-account balance)
     (define (withdraw amount)
          (begin (set! balance (- balance amount))
-                 balance)
+                 balance))
 
     (define (deposit amount)
          (begin (set! balance (+ balance amount))
-                balance)
+                balance))
 
     (define (dispatch m)
           (cond ((eq? m 'withdraw) withdraw)
