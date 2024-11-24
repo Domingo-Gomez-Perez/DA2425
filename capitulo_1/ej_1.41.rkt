@@ -1,14 +1,13 @@
 #lang racket
 
-; Hecho por:
-; EZQUERRA CEBALLOS, CARLOS
-; FERNÁNDEZ RIVERA, CRISTIAN MANUEL
-; GOMEZ GARCIA, GABRIEL
-; MUÑOZ FERNANDEZ, PAULA
-
 #|
-Exercise 1.41:
-Define a procedure `double` that takes a procedure of one argument as an argument 
+Hecho por
+EZQUERRA CEBALLOS, CARLOS
+FERNÁNDEZ RIVERA, CRISTIAN MANUEL
+GOMEZ GARCIA, GABRIEL
+MUÑOZ FERNANDEZ, PAULA
+
+Exercise 1.41: Define a procedure `double` that takes a procedure of one argument as an argument
 and returns a procedure that applies the original procedure twice.
 
 For example, if `inc` is a procedure that adds 1 to its argument, then `(double inc)`
@@ -24,8 +23,8 @@ What value is returned by:
 
 
 ; Definición de la función double
-(define (double proc)
-  (lambda (x) (proc (proc x)))) ; Aplica proc dos veces
+(define (double procedimiento)
+  (lambda (x) (procedimiento (procedimiento x)))) ; Aplica el procedimiento dos veces
 
 ; prueba
 (((double (double double)) inc) 5) ; => 21
