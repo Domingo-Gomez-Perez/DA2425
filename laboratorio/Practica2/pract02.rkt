@@ -20,9 +20,9 @@ MUÑOZ FERNANDEZ, PAULA
       (list-ref (cdr lista) (- n 1))))  ; Si n > 0, avanzamos recursivamente con (cdr) y reducimos n.
 
 (define (length lista)
-    (if (null? lista)
-        0
-     (+ 1 (length (cdr lista)))))
+  (if (null? lista)
+      0
+      (+ 1 (length (cdr lista)))))
 
 (define (busca x ed)
   (busca-aux x ed 0 (length ed)))
@@ -31,12 +31,12 @@ MUÑOZ FERNANDEZ, PAULA
   (if (>= i j)
       -1
       (let ((m (quotient (+ i j -1) 2)))
-       (let ((elem (if (list? ed)
-                       (list-ref ed m)
-                       (vector-ref ed m))))
-        (cond ((= elem x) m)  ; si encontramos el elemento, retornamos el índice
-              ((< elem x) (busca-aux x ed (+ m 1) j))  ; buscar en la mitad superior
-              (else (busca-aux x ed i m)))))))  ; buscar en la mitad inferior
+        (let ((elem (if (list? ed)
+                        (list-ref ed m)
+                        (vector-ref ed m))))
+          (cond ((= elem x) m)  ; si encontramos el elemento, retornamos el índice
+                ((< elem x) (busca-aux x ed (+ m 1) j))  ; buscar en la mitad superior
+                (else (busca-aux x ed i m)))))))  ; buscar en la mitad inferior
 
 #|
 2  Calcula una cota superior para la cantidad de llamadas a busca_aux que realiza el algoritmo
@@ -88,7 +88,7 @@ En total nos queda O(log2 n)^2.
 
 #|
 4  Aplicación del teorema maestro
-   El teorema maestro se puede aplicar a la complejidad temporal de la búsqueda por 
+   El teorema maestro se puede aplicar a la complejidad temporal de la búsqueda por
    bipartición, ya que esta operación tiene una estructura recursiva adecuada.
 
 
@@ -103,7 +103,7 @@ En relación con el segundo apartado, se puede aplicar de la siguiente manera:
 Al aplicar el teorema, observamos que logb a = log2 1 = 0, y el coste f(n) = θ(1) = n^0.
 Esto nos lleva al segundo caso del teorema, donde f(n)= θ(n^(logb a) ) = θ(n^0 ).
 Por lo tanto, la complejidad temporal es:
-T(n)= θ(n^(log2 1) * log ⁡n )= θ(log ⁡n) 
+T(n)= θ(n^(log2 1) * log ⁡n )= θ(log ⁡n)
 
 En relación con el tercer apartado, se puede aplicar de la siguiente manera:
   a = 1: Solo hay un subproblema.
@@ -111,7 +111,7 @@ En relación con el tercer apartado, se puede aplicar de la siguiente manera:
   f(n)= θ(log ⁡n): El coste de dividir el problema implica comparar números de θ(log ⁡n) bits.
 
 Al aplicar el teorema, observamos que logb a = log2 1 = 0, pero en este caso f(n) = θ(log ⁡n), siendo mayor que n^0 = 1.
-Por ello, nos encontramos ante el tercer caso del teorema, donde f(n) = Ω(n^(log2 1) ) y 
+Por ello, nos encontramos ante el tercer caso del teorema, donde f(n) = Ω(n^(log2 1) ) y
 se cumple la condición de regularidad (es decir, a * f(⌈n/b⌉) ≤ c * f(n) para algún c < 1).
 Por lo tanto, el coste total está dominado por f(n), y la complejidad es:
 T(n)= θ(log ⁡n )* θ(log ⁡n) = θ(log^2 ⁡n)
@@ -167,15 +167,15 @@ aunque se llame a el mismo, funciona como iterativo realmente.
 (let* ((resultado (busca 2 lista-ordenada3))
        (resultado2 (busca-iter 2 lista-ordenada3)))
   (display (string-append (number->string resultado) " y " (number->string resultado2))) (newline))
-  
+
 (let* ((resultado (busca 2 lista-ordenada2))
        (resultado2 (busca-iter 2 lista-ordenada2)))
-   (display (string-append (number->string resultado) " y " (number->string resultado2))) (newline))
+  (display (string-append (number->string resultado) " y " (number->string resultado2))) (newline))
 
 
-  ; PROGRAMAR EL WHILE EN SHEME (ejercicio extra 0.25 en el examen)
-  
-  (define (while test orden)
+; PROGRAMAR EL WHILE EN SHEME (ejercicio extra 0.25 en el examen)
+
+(define (while test orden)
   (if (test) ; Si la condición es verdadera
       (begin
         (orden) ; Ejecuta el cuerpo
@@ -195,5 +195,3 @@ aunque se llame a el mismo, funciona como iterativo realmente.
     (set! contador (+ contador 1)))) ; Incrementa el contador
 
 (while test orden) ; Inicia el bucle
-
-  
