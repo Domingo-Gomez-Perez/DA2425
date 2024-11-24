@@ -1,4 +1,5 @@
 #lang racket
+
 (define (cube-root x)
   (cube-iter 1.0 x))
 
@@ -13,5 +14,5 @@
           guess
           (cube-iter (improve guess x) x)))
 
+;Ejemplo
 (cube-root 27);
-
