@@ -162,14 +162,6 @@ Iteración 6:
   - Cuenta: 120 * 6 = 720
   - Apunta a `fact-iter: <procedure>`
 
-
-
-
-
-
-
-ponerlo como lo del recursivo que dice que no se elimina hasta acabar el ambiente
-
 Como vemos, tenemos dos casos distintos:
 
 Versión Recursiva:
