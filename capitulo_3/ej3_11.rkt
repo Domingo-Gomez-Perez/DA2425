@@ -10,22 +10,21 @@
 (define (make-account balance)
   (define (withdraw amount)
     (if (>= balance amount)
-        (begin (set! balance 
-                     (- balance 
-                        amount))
-                        balance)
+        (begin 
+          (set! balance (- balance amount))
+          balance)
         "Insufficient funds"))
   (define (deposit amount)
-    (set! balance (+ balance amount)
-    balance))
+    (begin
+      (set! balance (+ balance amount))
+      balance))
   (define (dispatch m)
-    (cond ((eq? m 'withdraw) withdraw)
-          ((eq? m 'deposit) deposit)
-          (else (error "Unknown request: 
-                        MAKE-ACCOUNT" 
-                       m
-                )
-          )))
+    (cond 
+      ((eq? m 'withdraw) withdraw)
+      ((eq? m 'deposit) deposit)
+      (else 
+       (error "Unknown request: MAKE-ACCOUNT" m))))
+  dispatch)
 
 
 
@@ -34,11 +33,32 @@
 (define acc (make-account 50))
 
 ((acc 'deposit) 40)
-90
+((acc 'deposit) 40)
+((acc 'deposit) 40)
+((acc 'deposit) 40)
+((acc 'deposit) 40)
+;90
 
 ((acc 'withdraw) 60)
-30
+;190
 
 ; Donde se mantiene el estado de acc? Qué partes tienen en común si (define acc2 (make-account 100))?
 
 (define acc2 (make-account 100))
+; 100
+
+((acc 'withdraw) 60)
+; 130
+
+((acc2 'withdraw) 60)
+; 40
+  
+((acc 'deposit) 40)
+; 70
+  
+((acc2 'deposit) 40)
+; 80
+
+
+
+;TODO: Implementar el diagrama de ambientes (hecho en OneNote).
