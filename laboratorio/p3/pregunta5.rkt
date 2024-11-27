@@ -8,8 +8,8 @@
             (list p1 p2)
             (begin
                 (if (< i mid)
-                    (loop (+ i 1) (append p1 (list (list-ref ordenada i))) p2)
-                    (loop (+ i 1) p1 (append p2 (list (list-ref ordenada i)))))))))
+                    (loop (+ i 1) (cons (list-ref ordenada i) p1) p2)
+                    (loop (+ i 1) p1 (cons (list-ref ordenada i) p2)))))))
 
 (define parts (divide-lista (list (list 1 4) (list 3 3) (list 4 8) (list 3 0) (list 3 20) (list 0 7) (list 3 2))))
 (define p1 (car parts))
@@ -17,15 +17,3 @@
 
 (displayln (list "P1: " p1))
 (displayln (list "P2: " p2))
-
-
-; Nota: Para mutar istas, en Racket, tenéis nuevas funciones:
-
-; -mcons <-> cons
-; -mcar    <-> car
-; -mcdr    <-> cdr
-
-; set-mcar
-; set-mcdr
-
-

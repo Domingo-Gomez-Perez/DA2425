@@ -1,4 +1,6 @@
 #lang racket
+
+; PREGUNTA 1
 (define (busca x lista)
     (busca-aux x lista 0 (get-length lista)))
             
@@ -118,17 +120,18 @@
 ; PREGUNTA 2)
 ;
 ; Para una lista con longitud n la cota superior para la cantidad de llamadas 
-; será de O(log2 n), ya que para cada llamada recursiva se divide la lista en dos.
+; será de log2 n, ya que para cada llamada recursiva se divide la lista en dos.
 ;
 ; La búsqueda binaria tiene una complejidad temporal de 
-; O(log2 n) y espacial también de O(log2 n)
+; O(log2 n) y espacial también de O(log2 n).
 
 ; PREGUNTA 3)
 ;
 ; El coste se puede considerar como O(log2 n) en términos de operaciones bit, ya que el número de 
-; bits necesarios para representar un número hasta n es O(log2 ⁡n)
+; bits necesarios para representar un número hasta n es O(log2 ⁡n).
+;
 ; La complejidad total será el producto del número de comparaciones y el coste de cada operación
-; O(log2 n) * O(log2 n) = O(log2 n) ^ 2
+; O(log2 n) * O(log2 n) = O((log2 n)^2).
 
 ; PREGUNTA 4)
 ;
@@ -142,16 +145,14 @@
 ; PREGUNTA 5)
 (define (busca-iter x lista)
     (define (busca-aux-iter lista i j x)
-    (let loop ((i i) (j j))
-    (if (> i j)
-        -1
-        (let* ((m (+ i (quotient (- j i) 2)))
-               (value (get-value lista m)))
-              (cond ((= value x) m)
-                    ((< value x) (loop (+ m 1) j))
-                    (else (loop i (- m 1))))))))
+        (let loop ((i i) (j j))
+                  (if (> i j)
+                      -1
+                      (let* ((m (+ i (quotient (- j i) 2)))
+                             (value (get-value lista m)))
+                            (cond ((= value x) m)
+                                  ((< value x) (loop (+ m 1) j))
+                                  (else (loop i (- m 1))))))))
     (busca-aux-iter lista 0 (get-length lista) x))
 
 (busca-iter 6 (vector 1 2 3 4 5 6 7 8))
-
-
