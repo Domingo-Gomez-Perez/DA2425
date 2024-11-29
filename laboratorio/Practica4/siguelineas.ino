@@ -5,7 +5,7 @@ int LINEA = HIGH;
 
 int TURN_AROUND_TIME = 1700;
 int QUARTER_BACK_TIME = 400;
-int EXTRA_FORWARD_TIME = 225;
+int EXTRA_FORWARD_TIME = 100;
 
 
 Servo servoIzq;
@@ -39,16 +39,20 @@ void setup(){
 
 void loop(){
   readIRSensor();
-  
-//  if(irSensorValues[0] == NO_LINEA && irSensorValues[3] == NO_LINEA && (irSensorValues[1] == LINEA || irSensorValues[2] == LINEA)){ 
-//   
-//}
-//  else if (irSensorValues[0] == LINEA )
-//  {}
-//  else if ( irSensorValues[2] == LINEA)
-//   {}
-//  else if (irSensorValues[0] == NO_LINEA && irSensorValues[2] == NO_LINEA)
-//   {}
+  if(irSensorValues[1] == NO_LINEA && digitalRead(pinIrDer) == LINEA){
+    servoIzq.write(0); 
+    servoDer.write(90);
+  }
+  else if(irSensorValues[1] == LINEA && irSensorValues[2] == NO_LINEA){
+    servoIzq.write(90); 
+    servoDer.write(180);
+  }
+  else if (irSensorValues[1] == LINEA || irSensorValues[2] == LINEA){
+    forwardMotor();
+  }
+  else if(irSensorValues[1] == NO_LINEA && irSensorValues[2] == NO_LINEA){
+    stopMotor();
+  }
 }
 
 void readIRSensor(){
@@ -104,19 +108,21 @@ void turnAround(){
 
 void turnRight(){
   forwardMotor(EXTRA_FORWARD_TIME);
-  servoIzq.write(0); 
-  servoDer.write(0);
+   servoIzq.write(0); 
+   servoDer.write(90);
   delay(QUARTER_BACK_TIME); 
   forward();
 }
 
 void turnLeft(){
   forwardMotor(EXTRA_FORWARD_TIME);
-  servoIzq.write(180); 
-  servoDer.write(180);
+   servoIzq.write(90); 
+   servoDer.write(0);
   delay(QUARTER_BACK_TIME); 
   forward();
 }
+
+
 
 
 
