@@ -1,0 +1,1 @@
+Asumiendo que todos los puntos tienen una coordenada x distinta, siempre se puede encontrar un x0 que divida los puntos en dos conjuntos iguales o en el peor caso con diferencia de uno. Esto se puede hacer tomando solo en cuenta la coordenada x, y ordenar los puntos respecto a esta y escoger el que está en el medio.

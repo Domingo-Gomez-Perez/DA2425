@@ -1,0 +1,22 @@
+#lang racket
+; Leer fichero
+(define (next-line-it file)
+  (let ((line (read-line file 'any)))
+    (unless (eof-object? line)
+      (cons line (next-line-it file))
+      )))
+
+(define (length s)
+    (if (null? s)
+        0
+	(+ 1 (length (cdr s)))))
+
+(define (devuelveLista lista) (
+    if (void? lista)
+       null
+       (if (null? lista)
+           lista
+           (cons (cons (string->number (car (string-split (car lista) " "))) (string->number (car (cdr (string-split (car lista) " "))))) (devuelveLista (cdr lista)))
+                                        )))
+
+(define listaPtos (devuelveLista (call-with-input-file "ej_pts_europa.txt" next-line-it)))
