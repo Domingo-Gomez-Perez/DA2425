@@ -9,7 +9,7 @@ NO_LINEA = 0
 LINEA = 1
 TURN_AROUND_TIME = 1700
 QUARTER_BACK_TIME = 400
-EXTRA_FORWARD_TIME = 100
+EXTRA_FORWARD_TIME = 225
 servoIzq = Servo.Servo(standard.board)
 servoDer = Servo.Servo(standard.board)
 pinIrIzqIzq = 10
@@ -20,6 +20,12 @@ pinServoDer = 9
 pinServoIzq = 8
 irSensorValues = [0, 0, 0, 0]
 
+seed = 12345
+a = 22695477
+c = 0
+m = 4294967296
+bit = ((((seed >> 3) ^ (seed >> 5)) ^ seed) & 1)
+contador_giros = 0
 
 def setup():
 	global NO_LINEA
@@ -36,6 +42,14 @@ def setup():
 	global pinServoDer
 	global pinServoIzq
 	global irSensorValues
+	global seed
+	global a
+	global c
+	global m
+	global bit
+	global contador_giros
+	Serial.println(String.String("test1"))
+	Serial.begin(9600)
 	standard.pin_mode(pinIrDer, 0)
 	standard.pin_mode(pinIrIzq, 0)
 	servoIzq.attach(pinServoIzq)
@@ -43,6 +57,7 @@ def setup():
 	stopMotor()
 	standard.delay(500)
 	forward()
+	readIRSensor()
 
 def loop():
 	global NO_LINEA
@@ -59,27 +74,13 @@ def loop():
 	global pinServoDer
 	global pinServoIzq
 	global irSensorValues
-	readIRSensor()
-	if ((irSensorValues[1] == NO_LINEA) and (standard.digital_read(pinIrDer) == LINEA)):
-		servoIzq.write(0)
-		servoDer.write(90)
-	elif ((irSensorValues[1] == LINEA) and (irSensorValues[2] == NO_LINEA)):
-		servoIzq.write(90)
-		servoDer.write(180)
-	elif ((irSensorValues[1] == LINEA) or (irSensorValues[2] == LINEA)):
-		forwardMotor()
-	elif (irSensorValues[0] == LINEA):
-		servoIzq.write(90)
-		servoDer.write(180)
-		standard.delay(EXTRA_FORWARD_TIME)
-		forwardMotor1((EXTRA_FORWARD_TIME / 2))
-	elif (irSensorValues[3] == LINEA):
-		servoIzq.write(0)
-		servoDer.write(90)
-		standard.delay((EXTRA_FORWARD_TIME / 2))
-		forwardMotor1((EXTRA_FORWARD_TIME / 2))
-	else:
-		stopMotor()
+	global seed
+	global a
+	global c
+	global m
+	global bit
+	global contador_giros
+	Serial.println(String.String("test2"))
 
 def readIRSensor():
 	global NO_LINEA
@@ -96,6 +97,12 @@ def readIRSensor():
 	global pinServoDer
 	global pinServoIzq
 	global irSensorValues
+	global seed
+	global a
+	global c
+	global m
+	global bit
+	global contador_giros
 	irSensorValues[0] = standard.digital_read(pinIrIzqIzq)
 	irSensorValues[1] = standard.digital_read(pinIrIzq)
 	irSensorValues[2] = standard.digital_read(pinIrDer)
@@ -116,6 +123,12 @@ def forward():
 	global pinServoDer
 	global pinServoIzq
 	global irSensorValues
+	global seed
+	global a
+	global c
+	global m
+	global bit
+	global contador_giros
 	if ((standard.digital_read(pinIrIzq) == NO_LINEA) and (standard.digital_read(pinIrDer) == LINEA)):
 		servoIzq.write(0)
 		servoDer.write(90)
@@ -142,6 +155,12 @@ def stopMotor():
 	global pinServoDer
 	global pinServoIzq
 	global irSensorValues
+	global seed
+	global a
+	global c
+	global m
+	global bit
+	global contador_giros
 	servoIzq.write(90)
 	servoDer.write(90)
 
@@ -160,6 +179,12 @@ def forwardMotor():
 	global pinServoDer
 	global pinServoIzq
 	global irSensorValues
+	global seed
+	global a
+	global c
+	global m
+	global bit
+	global contador_giros
 	servoIzq.write(0)
 	servoDer.write(180)
 
@@ -178,6 +203,12 @@ def forwardMotor1(xTime = 0):
 	global pinServoDer
 	global pinServoIzq
 	global irSensorValues
+	global seed
+	global a
+	global c
+	global m
+	global bit
+	global contador_giros
 	forwardMotor()
 	standard.delay(xTime)
 
@@ -196,6 +227,12 @@ def turnAround():
 	global pinServoDer
 	global pinServoIzq
 	global irSensorValues
+	global seed
+	global a
+	global c
+	global m
+	global bit
+	global contador_giros
 	servoIzq.write(0)
 	servoDer.write(0)
 	standard.delay(TURN_AROUND_TIME)
@@ -216,10 +253,16 @@ def turnRight():
 	global pinServoDer
 	global pinServoIzq
 	global irSensorValues
+	global seed
+	global a
+	global c
+	global m
+	global bit
+	global contador_giros
 	forwardMotor1(EXTRA_FORWARD_TIME)
 	servoIzq.write(0)
 	servoDer.write(90)
-	standard.delay(QUARTER_BACK_TIME)
+	standard.delay((QUARTER_BACK_TIME / 2))
 	forward()
 
 def turnLeft():
@@ -237,8 +280,14 @@ def turnLeft():
 	global pinServoDer
 	global pinServoIzq
 	global irSensorValues
+	global seed
+	global a
+	global c
+	global m
+	global bit
+	global contador_giros
 	forwardMotor1(EXTRA_FORWARD_TIME)
 	servoIzq.write(90)
-	servoDer.write(0)
-	standard.delay(QUARTER_BACK_TIME)
+	servoDer.write(180)
+	standard.delay((QUARTER_BACK_TIME / 2))
 	forward()
