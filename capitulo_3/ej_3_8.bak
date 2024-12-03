@@ -1,0 +1,20 @@
+#lang racket
+
+(define (suma_valor valor)
+  (define (f x)
+    (begin (set! valor (+ valor x))
+           valor))
+  f
+  )
+
+(define a (suma_valor 2))
+
+
+
+(define inicial 0)
+
+(define (f x)
+  (set! inicial x)  ; Assign the value of x to state
+  inicial)
+
+(+ (f 0) (f 1))

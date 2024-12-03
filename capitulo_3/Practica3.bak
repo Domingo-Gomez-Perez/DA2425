@@ -1,0 +1,51 @@
+#lang racket
+
+;; Función para calcular la distancia euclidiana entre dos puntos.
+(define (distancia p1 p2)
+  (sqrt (+ (sqr (- (car p1) (car p2))) ; diferencia en x
+           (sqr (- (cadr p1) (cadr p2)))))) ; diferencia en y
+
+;; Función para encontrar los dos puntos más cercanos utilizando fuerza bruta.
+(define (puntos-mas-cercanos puntos)
+  (define n (length puntos))
+  (define min-dist +inf.0)  ; Inicializa la distancia mínima con infinito.
+  (define closest-points '()) ; Inicializa la lista de puntos más cercanos.
+  
+  ;; Recorre todos los pares de puntos
+  (for ([i (in-range n)])
+    (for ([j (in-range (+ i 1) n)]) ; i < j
+      (define d (distancia (list-ref puntos i) (list-ref puntos j))) ; Calcula la distancia
+      (when (< d min-dist) ; Si la distancia es menor que la mínima actual
+        (set! min-dist d) ; Actualiza la distancia mínima
+        (set! closest-points (list (list-ref puntos i) (list-ref puntos j))))))
+  (values closest-points min-dist)) ; Actualiza los puntos más cercanos
+
+   ; Retorna los puntos más cercanos y la distancia mínima
+
+;; Función para leer puntos desde un archivo
+(define (leer-puntos archivo)
+  (define puntos '())
+  (define in (open-input-file archivo)) ; Abre el archivo para lectura
+  
+   ; Manejo de errores
+    (let loop ()
+      (define linea (read-line in 'eof)) ; Lee una línea
+      (when (not (eq? linea 'eof)) ; Si no es el final del archivo
+        (define punto (map read (string-split linea))) ; Convierte la línea en una lista de números
+        (set! puntos (cons punto puntos)) ; Añade el punto a la lista
+        (loop))) ; Llama recursivamente para leer más puntos
+    (close-input-port in)
+  (reverse puntos)) ; Cierra el archivo
+   ; Devuelve la lista de puntos
+
+;; Función principal que ejecuta el programa
+(define (main archivo)
+  (define puntos (leer-puntos archivo)) ; Lee los puntos del archivo
+  (if (null? puntos)
+      (displayln "No se encontraron puntos en el archivo.")
+      (let-values (((closest min-dist) (puntos-mas-cercanos puntos))) ; Encuentra los puntos más cercanos
+        (displayln (format "Los puntos más cercanos son: ~a y ~a" (first closest) (second closest)))
+        (displayln (format "La distancia mínima es: ~a" min-dist))))) ; Muestra los resultados
+
+;; Ejecuta el programa con el nombre del archivo proporcionado por el usuario
+(main "puntos.txt") ; Cambia "puntos.txt" por el nombre de tu archivo
