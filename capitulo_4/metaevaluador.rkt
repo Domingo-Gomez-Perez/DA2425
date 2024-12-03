@@ -5,11 +5,11 @@
 
 (define (seval exp environ)
   ; Evaluate a scheme expression
-  (cond ((primitiva? exp) ???)                            ; Primitive just "are". Return back
-        ((simbolo? exp) ???)  ; Symbols? Look up in the environment.
-        ((define? exp) ???)
-        ((if? exp) ???)
-        ((quote? exp) ???)
+  (cond ((primitiva? exp) exp)                            ; Primitive just "are". Return back
+        ((simbolo? exp) (hash-ref environ exp))  ; Symbols? Look up in the environment.
+        ((define? exp) (hash-set! environ (define-name exp) (define-value exp)))
+        ((if? exp) (seval-if exp environ))
+        ((quote? exp) (seval-quote exp environ))
         ; ((cond? exp) ...)
         ; ((let ...))
         ; ((delay...))
@@ -34,6 +34,9 @@
 (define (primitiva? exp)
   (or (number? exp) (boolean? exp)))
 
+(define (simbolo? exp)
+  (hash-has-key? environ exp)
+  )
 (define (aplicacion-procedimiento? exp)
   (list? exp)
   )
