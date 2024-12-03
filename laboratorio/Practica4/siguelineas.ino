@@ -36,7 +36,8 @@ unsigned int lcg()
 // Genera un bit aleatorio (0 o 1) y lo devuelve como booleano
 bool randomBit()
 {
-  return (lcg() % 2) == 1; // Esto asegura que siempre se devuelva true o false
+  Serial.println(seed);
+  return (lcg() > M/2); // Esto asegura que siempre se devuelva true o false
 }
 
 void setup()
@@ -155,3 +156,4 @@ void turnLeft()
   delay(QUARTER_BACK_TIME);
   forward();
 }
+
