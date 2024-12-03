@@ -20,7 +20,9 @@ x
 
 (define (deep-reverseaux lista resultado)
     (if (null? (cdr lista)) (cons (if (list? (car lista)) (deep-reverseaux (car lista) null) (car lista)) resultado) ;Si no hay mas elementos
-        (deep-reverseaux (cdr lista) (cons (if (list? (car lista)) (deep-reverseaux (car lista) null) (car lista)) resultado))));Si hay mas elementos quito de la lista el primer elemento y lo añado al final del resultado
+        (deep-reverseaux (cdr lista) (cons (if (list? (car lista))
+                                               (deep-reverseaux (car lista) null)
+                                               (car lista)) resultado))));Si hay mas elementos quito de la lista el primer elemento y lo añado al final del resultado
 
 ;inicializo el resultado a null
 (define (deep-reverse lista) (deep-reverseaux lista null))
