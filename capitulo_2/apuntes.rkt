@@ -1,18 +1,5 @@
 #lang racket
 
-
-; PREGUNTAR: EL 2.6 que es lo uqe hay que hacer y como se hace el +
-
-; EL 39 vale con el append en el fold right??
-
-; el special patterns (tiene que poder buscar, si es el simbolo jsuto hace cosas (intentar recuivo))
-
-; el special binding (te tiene que decir la estructura completa y hay que pode buscar cada cosa)
-
-; el E (es para hacer imports (hay que poner los defines dentro y usar los register y tal al general))
-
-; el F (cosas de mensajes)
-
 #|
 Chapter 2 : Building Abstractions with Data
 
@@ -40,9 +27,7 @@ Hecho por: Gabriel Gomez Garcia
 
 ; Ahora nos hablan de hacer cosas como numerador y denominador por hacer algo con la info
 (define (make-rat n d)
-  (let ((g (gcd n d)))
-    (cons (/ n g)
-          (/ d g))))
+  (let ([g (gcd n d)]) (cons (/ n g) (/ d g))))
 
 ; Por ejemplo eso para hacer fracciones y simplificarlas
 
@@ -71,10 +56,7 @@ Hecho por: Gabriel Gomez Garcia
 #| 2.2.1Representing Sequences |#
 
 ; Asi enlazando muchos cons y al final un null, pues tenemos una lista
-(cons 1
-      (cons 2
-            (cons 3
-                  (cons 4 null))))
+(cons 1 (cons 2 (cons 3 (cons 4 null))))
 ; como escribirlo asi es horrible pues han hecho un acortamiento:
 (list 1 2 3 4)
 ; cuidado no poner sin list que no es lo mismo (1 2 3 4)
@@ -94,7 +76,6 @@ Hecho por: Gabriel Gomez Garcia
 ;         base-case
 ; 	(<op> (do-something (cdr s)))))
 
-
 ; lo del punto en los parametros.
 ; si tu pones x y . resto, x e y seran el parametro 1 y 2 y lo demas sera una lista con todos los extras
 
@@ -104,8 +85,7 @@ Hecho por: Gabriel Gomez Garcia
 (define (map proc items)
   (if (null? items)
       null
-      (cons (proc (car items))
-            (map proc (cdr items)))))
+      (cons (proc (car items)) (map proc (cdr items)))))
 
 ; (donde dice nil en verdad es null)
 ; asi con esa procedimiento se abstrae la funcionalidad
@@ -122,14 +102,10 @@ Hecho por: Gabriel Gomez Garcia
 ; a hacer la abstraccion
 
 (define (scale-tree tree factor)
-  (cond ((null? tree) null)
-        ((not (pair? tree))
-         (* tree factor))
-        (else
-         (cons (scale-tree (car tree)
-                           factor)
-               (scale-tree (cdr tree)
-                           factor)))))
+  (cond
+    [(null? tree) null]
+    [(not (pair? tree)) (* tree factor)]
+    [else (cons (scale-tree (car tree) factor) (scale-tree (cdr tree) factor))]))
 ; y ya con ese esquema se hace de to.
 ; incluso con map se puede reducir mas:
 ; esto es para escalar con el factor pero se puede ampliar para todo
@@ -144,8 +120,8 @@ Hecho por: Gabriel Gomez Garcia
 (define (mapa-tree proc tree)
   (map (lambda (sub-tree)
          (if (pair? sub-tree)
-             (mapa-tree proc sub-tree)  ; Llamada recursiva si es un subárbol
-             (proc sub-tree)))           ; Aplicar el procedimiento a la hoja
+             (mapa-tree proc sub-tree) ; Llamada recursiva si es un subárbol
+             (proc sub-tree))) ; Aplicar el procedimiento a la hoja
        tree))
 
 #| 2.2.3 Sequences as Conventional Interfaces |#
@@ -193,9 +169,10 @@ Hecho por: Gabriel Gomez Garcia
 ; otra cosa importante que se puede hacer es saber si un elemento esta en una lista
 ; usando el eq? para cada elemento de la lista a ver si lo encuentra
 (define (memq item x)
-  (cond ((null? x) false)
-        ((eq? item (car x)) x)
-        (else (memq item (cdr x)))))
+  (cond
+    [(null? x) false]
+    [(eq? item (car x)) x]
+    [else (memq item (cdr x))]))
 
 ; *ejercicios de aprender a usarlas*
 ; *ahora ejercicios especiales*
@@ -246,7 +223,6 @@ Hecho por: Gabriel Gomez Garcia
 
 ; vemos que los dos son la misma estructura pero cada uno lo enteinde distinto
 
-
 ; Type Identification
 ; si queremos hacer un metodo width que nos diga bien el atributo con cualquiera de las dos
 ; es imposible porque solo se puede tener un nombre igual y el cuadrado se representa igual
@@ -254,14 +230,17 @@ Hecho por: Gabriel Gomez Garcia
 ; para eso sirven los tags
 
 ; para poner un tag y para ver el contenido y el tipo
-(define (attach-tag tag contents) (cons tag contents))
-(define (type-tag datum) (car datum))
-(define (contents datum) (cdr datum))
+(define (attach-tag tag contents)
+  (cons tag contents))
+(define (type-tag datum)
+  (car datum))
+(define (contents datum)
+  (cdr datum))
 
 ; ejemplo
-(define dato (attach-tag 'int 23))    ; -> (int 23)
-(type-tag dato)                       ; -> 'int
-(contents dato)                       ; -> 23
+(define dato (attach-tag 'int 23)) ; -> (int 23)
+(type-tag dato) ; -> 'int
+(contents dato) ; -> 23
 
 ; hasta el ejercicio c esta como crear metodos genericos. sigamos
 
@@ -279,7 +258,6 @@ Hecho por: Gabriel Gomez Garcia
 ; Haber dejado todo escrito ahi tal cual lo deja todo muy feo porque ahora se puede ver todo desde
 ; cualquier parte del programa y queda mal. Asi que para eso lo podemos meter todo dentro de un
 ; namespace (dentro de un define) para que no se vea toda la implementacion interna desde fuera
-
 
 #|
 2.5 Systems with Generic Operations
