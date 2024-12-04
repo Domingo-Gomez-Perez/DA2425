@@ -1,0 +1,51 @@
+Explicación del giro del coche a la izquierda y derecha
+En el archivo siguelineas.ino, el coche utiliza dos servomotores controlados por señales PWM para moverse y girar. Las funciones para girar a la izquierda y derecha están definidas como turnLeft() y turnRight() respectivamente.
+
+Giro a la derecha (turnRight()):
+
+	Acción inicial: El coche avanza un poco más hacia adelante para moverse antes de girar. 
+		Esto se hace llamando a forwardMotor(EXTRA_FORWARD_TIME) para que ambos motores 
+		giren hacia adelante durante un breve período de tiempo.
+
+	Rotación: Los servos se configuran para girar en el sentido que lleva el coche a la derecha:
+		servoIzq.write(0); → El servo izquierdo gira hacia adelante.
+		servoDer.write(0); → El servo derecho gira hacia atrás.
+
+	Duración del giro: Se mantiene la rotación durante un tiempo fijo definido por QUARTER_BACK_TIME
+	con un delay() para garantizar que el giro sea suficiente.
+
+	Reanudación: Después de girar, el coche retoma el movimiento hacia adelante llamando a la función
+	forward()par volver a saber que hacer.
+
+
+Giro a la izquierda (turnLeft()):
+
+	Acción inicial: Como en el giro a la derecha, el coche avanza un poco más antes de comenzar a girar
+	usando forwardMotor(EXTRA_FORWARD_TIME).
+
+	Rotación: Los servos se configuran para que el coche gire hacia la izquierda:
+		servoIzq.write(180); → El servo izquierdo gira hacia atrás.
+		servoDer.write(180); → El servo derecho gira hacia adelante.
+
+	Duración del giro: El giro se mantiene durante QUARTER_BACK_TIME usando delay().
+
+	Reanudación: Después del giro, se llama a forward() para que el coche vuelva a moverse hacia adelante.
+
+
+Lectura de los pines digitales de los sensores
+El coche utiliza cuatro sensores IR para detectar la línea negra en el suelo. Los pines de los sensores están definidos como pinIrIzqIzq, pinIrIzq, pinIrDer, y pinIrDerDer. La lectura de estos sensores se realiza mediante la función readIRSensor():
+
+void readIRSensor(){
+  irSensorValues[0] = digitalRead(pinIrIzqIzq);
+  irSensorValues[1] = digitalRead(pinIrIzq);
+  irSensorValues[2] = digitalRead(pinIrDer);
+  irSensorValues[3] = digitalRead(pinIrDerDer);
+}
+
+Cada sensor IR se conecta a un pin de entrada digital y se lee utilizando digitalRead().
+Los valores leídos se almacenan en un array irSensorValues[], donde cada posición corresponde a un sensor.
+Valores y detección de la línea:
+
+Valor HIGH (true): Indica que el sensor detecta la línea negra.
+
+Valor LOW (false): Indica que el sensor no detecta la línea negra.
