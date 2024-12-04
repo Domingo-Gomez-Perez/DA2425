@@ -61,4 +61,4 @@ b        ; -> '((1 . 2) 3 . 4)
 a        ;-> '((1 . 2) 3 . 4)
 b        ;-> '((1 . 2) 3 . 4)
 
-; vemos que efectivamente tienen la misma esctructura pero cada uno lo enteinde a su manera
+; vemos que efectivamente tienen la misma esctructura pero cada uno lo representa a su manera.
