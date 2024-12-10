@@ -720,3 +720,184 @@ y
       user-initial-environment)
 
 En verdad esto es como la maquina universal de turing. o.o
+
+
+#| 4.1.6 Definiciones Internas |#
+
+En el modelo de evaluación basado en entornos y en el evaluador metacircular, las definiciones se ejecutan
+secuencialmente, extendiendo el marco del entorno una definición a la vez. Esto es conveniente para el 
+desarrollo interactivo de programas, ya que permite mezclar libremente la aplicación de procedimientos 
+con la definición de nuevos procedimientos.
+
+El problema de las definiciones internas
+Consideremos el siguiente procedimiento con definiciones internas:
+(define (f x)
+  (define (even? n)
+    (if (= n 0)
+        true
+        (odd? (- n 1))))
+  (define (odd? n)
+    (if (= n 0)
+        false
+        (even? (- n 1))))
+  ⟨rest of body of f⟩)
+
+Aquí, nuestra intención es que el nombre odd? en el cuerpo del procedimiento even? se refiera al 
+procedimiento odd?, que se define después de even?. La área de validez (scope) del nombre odd? debe 
+abarcar todo el cuerpo de f, no solo la parte del cuerpo que empieza en el punto donde se define odd?.
+
+Esto es especialmente importante porque odd? se define en términos de even?, y ambos procedimientos 
+son mutuamente recursivos. Para que esto funcione correctamente, las definiciones deben interpretarse 
+como si los nombres even? y odd? se añadieran al entorno simultáneamente.
+
+Por qué funciona el evaluador actual
+Nuestro intérprete evalúa correctamente las llamadas a f, pero esto ocurre por una razón "accidental". 
+Como las definiciones internas (even? y odd?) aparecen primero en el cuerpo de f, no se evalúan llamadas 
+a estos procedimientos hasta que ambas definiciones han sido procesadas. Esto asegura que odd? estará 
+definido cuando se evalúe even?.
+
+Sin embargo, este comportamiento no es general. Si las definiciones internas no aparecen al principio 
+del cuerpo del procedimiento o si las expresiones de valor de las definiciones dependen de otras 
+definiciones internas, este enfoque secuencial podría fallar.
+
+Una solución: Definiciones simultáneas
+Una forma sencilla de manejar correctamente las definiciones internas es asegurarse de que las variables
+locales definidas tengan un alcance verdaderamente simultáneo. Esto puede lograrse creando todas las 
+variables locales en el entorno actual antes de evaluar cualquier expresión de valor. 
+Esto se implementa mediante una transformación de sintaxis en expresiones lambda.
+
+Por ejemplo, consideremos un procedimiento con definiciones internas como este:
+(lambda ⟨vars⟩
+  (define u ⟨e1⟩)
+  (define v ⟨e2⟩)
+  ⟨e3⟩)
+Podemos transformarlo en:
+
+(lambda ⟨vars⟩
+  (let ((u '*unassigned*)
+        (v '*unassigned*))
+    (set! u ⟨e1⟩)
+    (set! v ⟨e2⟩)
+    ⟨e3⟩))
+Aquí, *unassigned* es un símbolo especial que provoca un error si se intenta usar una variable 
+que aún no ha sido asignada. Este enfoque asegura que todas las variables internas (u y v en este caso) 
+se creen simultáneamente antes de evaluar las expresiones de valor asociadas.
+
+Alternativa: Restricción de dependencias
+Esta alternativa impone la restricción de que los valores de las variables definidas deben poder 
+evaluarse sin depender de los valores de otras variables definidas. Este enfoque, aunque más restrictivo, 
+elimina posibles dependencias circulares entre las definiciones.
+
+#| 4.1.7Separación del análisis sintáctico y la ejecución |#
+
+Problema: Análisis y ejecución entrelazados
+En el evaluador simple presentado anteriormente, cada vez que se evalúa una expresión:
+
+Se analiza su sintaxis (por ejemplo, para determinar si es un if, un lambda o una aplicación).
+Luego, se ejecuta la expresión.
+Por ejemplo:
+(define (factorial n)
+  (if (= n 1)
+      1
+      (* (factorial (- n 1)) n)))
+Si evaluamos (factorial 4), el evaluador:
+
+Determina repetidamente que el cuerpo de factorial es una expresión if.
+Extrae el predicado (= n 1) y lo evalúa.
+Hace lo mismo para la expresión (* (factorial (- n 1)) n) y sus subexpresiones.
+Este proceso repite el análisis de la misma expresión muchas veces, lo que resulta ineficiente.
+
+Solución: Separar análisis y ejecución
+El análisis sintáctico se realiza una sola vez.
+Se genera un procedimiento de ejecución que encapsula el trabajo de evaluar la expresión en un entorno dado.
+Esto se logra separando la función eval en dos partes:
+
+analyze: Realiza el análisis sintáctico y devuelve un procedimiento de ejecución.
+Procedimiento de ejecución: Se aplica al entorno para realizar la evaluación.
+Ahora, eval queda definido como:
+(define (eval exp env)
+  ((analyze exp) env))
+Aquí, analyze genera un procedimiento que se ejecutará con el entorno adecuado.
+
+
+Estructura de analyze
+analyze realiza un análisis basado en el tipo de expresión, similar a cómo lo hacía eval. 
+Sin embargo, en lugar de ejecutar directamente la expresión, devuelve un procedimiento que encapsula 
+la ejecución. Por ejemplo:
+
+Expresiones autoevaluables:
+(define (analyze-self-evaluating exp)
+  (lambda (env) exp))
+El procedimiento resultante ignora el entorno y simplemente devuelve el valor.
+
+Expresiones con quote:
+(define (analyze-quoted exp)
+  (let ((qval (text-of-quotation exp)))
+    (lambda (env) qval)))
+Aquí, el texto de la cita se extrae una vez durante el análisis, ahorrando trabajo en la ejecución.
+
+Variables:
+(define (analyze-variable exp)
+  (lambda (env) 
+    (lookup-variable-value exp env)))
+El valor de la variable depende del entorno, por lo que su búsqueda se retrasa hasta la ejecución.
+
+
+Ventajas en estructuras más complejas
+Asignaciones y definiciones: Durante el análisis, se analiza el valor asignado, 
+lo que evita analizarlo múltiples veces durante la ejecución:
+(define (analyze-assignment exp)
+  (let ((var (assignment-variable exp))
+        (vproc (analyze (assignment-value exp))))
+    (lambda (env)
+      (set-variable-value! var (vproc env) env)
+      'ok)))
+
+Condicionales (if): Se analizan el predicado, la consecuencia y la alternativa una sola vez:
+(define (analyze-if exp)
+  (let ((pproc (analyze (if-predicate exp)))
+        (cproc (analyze (if-consequent exp)))
+        (aproc (analyze (if-alternative exp))))
+    (lambda (env)
+      (if (true? (pproc env))
+          (cproc env)
+          (aproc env)))))
+
+Expresiones lambda: La eficiencia mejora considerablemente porque el cuerpo de un lambda se analiza solo una vez, 
+aunque la función se aplique muchas veces:
+(define (analyze-lambda exp)
+  (let ((vars (lambda-parameters exp))
+        (bproc (analyze-sequence (lambda-body exp))))
+    (lambda (env) 
+      (make-procedure vars bproc env))))
+
+(hay mas en el libro que no he puesto)
+
+Secuencias de expresiones
+Para analizar secuencias (como en un begin o el cuerpo de un lambda):
+Cada expresión se analiza por separado.
+Los procedimientos resultantes se combinan en un procedimiento que ejecuta las expresiones en orden:
+(define (analyze-sequence exps)
+  (let ((procs (map analyze exps)))
+    (if (null? procs)
+        (error "Empty sequence: ANALYZE"))
+    (loop (car procs) (cdr procs))))
+
+Aplicaciones
+En una aplicación, el operador y los operandos se analizan una sola vez. El procedimiento resultante:
+Evalúa el operador para obtener la función.
+Evalúa los operandos para obtener los argumentos.
+Llama a la función con esos argumentos:
+(define (analyze-application exp)
+  (let ((fproc (analyze (operator exp)))
+        (aprocs (map analyze (operands exp))))
+    (lambda (env)
+      (execute-application 
+       (fproc env)
+       (map (lambda (aproc) (aproc env))
+            aprocs)))))
+La función auxiliar execute-application maneja la aplicación de procedimientos primitivos y compuestos.
+
+Separar el análisis sintáctico de la ejecución hace que el evaluador sea más eficiente, 
+ya que el análisis se realiza solo una vez, incluso si una expresión se evalúa repetidamente. 
+Esto es especialmente útil para programas complejos o funciones que se llaman muchas veces.

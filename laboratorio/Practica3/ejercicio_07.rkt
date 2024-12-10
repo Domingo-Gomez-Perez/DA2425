@@ -13,7 +13,6 @@
         lista
         (drop (cdr lista) (- n 1))))
 
-        
   (let* ([puntos-ordenados puntos] ; ordenar los puntos por su coordenada x
          [n (length puntos-ordenados)] ; largo de la lista de puntos
          [mitad (quotient n 2)] ; calcular la mitad de la lista
@@ -45,7 +44,6 @@
 ; Llamada para leer el archivo y almacenar los puntos
 (define puntos (call-with-input-file "europa_x_creciente.txt" lines-to-list))
 
-
 ; Dividir los puntos
 (define resultado (dividir-puntos puntos))
 
@@ -71,6 +69,3 @@
 (display "Punto de corte (x0):\n")
 (display x0) ; Mostrar el valor de corte x0
 (newline)
-
-
-

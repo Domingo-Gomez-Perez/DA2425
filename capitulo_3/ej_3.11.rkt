@@ -101,18 +101,18 @@ Aqui ni el codigo ni ambiente se comparte, aunque se podria crear el codigo comp
 se crea uno nuevo para cada llamada a make-account.
 
 
- __________________________
-|  Global Environment      |
-|--------------------------|
+ ___________________________
+|  Global Environment       |
+|-------------------------- |
 |  make-account: <procedure>|
-|__________________________|
+|___________________________|
         ^
         |
  _________________________________________   _______________________________________
-|           acc Environment (Created)     | |           acc2 Environment (Created) |
-|-----------------------------------------| |--------------------------------------|
-| balance: 50                             | | balance: 100                        |
-| withdraw: <procedure>                   | | withdraw: <procedure>               |
-| deposit: <procedure>                    | | deposit: <procedure>                |
-| dispatch: <procedure>                   | | dispatch: <procedure>               |
-|_________________________________________| |______________________________________|
+|           acc Environment (Created)     | |           acc2 Environment (Created)  |
+|-----------------------------------------| |-------------------------------------- |
+| balance: 50                             | | balance: 100                          |
+| withdraw: <procedure>                   | | withdraw: <procedure>                 |
+| deposit: <procedure>                    | | deposit: <procedure>                  |
+| dispatch: <procedure>                   | | dispatch: <procedure>                 |
+|_________________________________________| |_______________________________________|
