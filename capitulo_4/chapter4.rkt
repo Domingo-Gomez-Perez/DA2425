@@ -210,7 +210,7 @@
 (check-equal? (seval '(if (< 3 2) (/ 1 0) 1) environ) 1 "if-false failed")
 (check-equal? (seval '(if (< 2 3) 1 (/ 1 0)) environ) 1 "if-true failed")
 
-;; Tests for 'cond' expressions
+;; Tests para expresiones 'cond' 
 (check-equal? (seval '(cond ((> 2 3) 'greater)
                             ((< 2 3) 'less)
                             (else 'equal)) environ) 'less "cond test 1 failed")
@@ -220,14 +220,14 @@
                             ((> 4 5) 'b)
                             (else 'c)) environ) 'c "cond else clause failed")
 
-;; Tests for 'let' expressions
+;; Tests para expresiones 'let'
 (check-equal? (seval '(let ((x 2) (y 3)) (+ x y)) environ) 5 "let test 1 failed")
 (check-equal? (seval '(let ((x 5)) (* x x)) environ) 25 "let test 2 failed")
 (check-equal? (seval '(let ((a 1) (b 2))
                         (let ((c (+ a b)))
                           (* c c))) environ) 9 "nested let test failed")
 
-;; Tests for 'delay' expressions
+;; Tests para expresiones 'delay'
 (define delayed-exp (seval '(delay (* 2 3)) environ))
 (check-equal? (delayed-exp) 6 "delay test 1 failed")
 (define delayed-sum (seval '(delay (+ 5 7)) environ))
