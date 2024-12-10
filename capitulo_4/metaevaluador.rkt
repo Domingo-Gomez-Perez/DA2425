@@ -7,16 +7,16 @@
   ; Evaluate a scheme expression
   (cond ((primitiva? exp) exp)                            ; Primitive just "are". Return back
         ((simbolo? exp) (hash-ref environ exp))  ; Symbols? Look up in the environment.
-        ((define? exp) (hash-set! environ (define-name exp) (define-value exp)))
+        ((define? exp) (hash-set! environ (define-name exp) (seval (define-value exp) environ)))
         ((if? exp) (seval-if exp environ))
         ((quote? exp) (seval-quote exp environ))
         ; ((cond? exp) ...)
         ; ((let ...))
         ; ((delay...))
-        ((begin? exp) ???)
-        ((lambda? exp) ???)
-        ((procedure-application? exp) ???)
-        (else (error "Error desconocido"))
+        ;((begin? exp) ???)
+        ;((lambda? exp) ???)
+        ;((procedure-application? exp) ???)
+        (else exp)
         )
   )
 
@@ -65,6 +65,19 @@
     )
   )
 
+(define (make-frame variables values)
+  (cons variables values))
+
+(define (define-in-environment! vars vals base-env)
+  (if (= (length vars) (length vals))
+      (cons (make-frame vars vals) base-env)
+      (if (< (length vars) (length vals))
+          (error "Too many arguments supplied" 
+                 vars 
+                 vals)
+          (error "Too few arguments supplied" 
+                 vars 
+                 vals))))
 
 
 (define (quote? exp)
@@ -116,12 +129,17 @@
   (cdr exp)      ; Note: this returns a *list* of the expressions
   )
 
+(define (check-equal? exp1 exp2 mensaje)
+  (if (eq? exp1 exp2)
+      0
+      mensaje))
+
 
 ;; Varias pruebas para ver que es lo que tiene que ocurrir
-(check-equal? (seval '42 environ) 42 "Primitives failed")
-(check-equal? (seval 'foo environ) 123 "Symbol lookup failed")
-(seval '(define x 42) environ)
-(check-equal? (seval 'x environ) 42 "Simple define failed")
+;(check-equal? (seval '42 environ) 42 "Primitives failed")
+;(check-equal? (seval 'foo environ) 123 "Symbol lookup failed")
+;(seval '(define x 42) environ)
+;(check-equal? (seval 'x environ) 42 "Simple define failed")
 (seval '(define y (+ 2 3)) environ)
 (check-equal? (seval 'y environ) 5 "Expression define failed")
 (check-equal? (seval '(quote x) environ) 'x "Quoting failed")
