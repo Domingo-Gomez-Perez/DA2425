@@ -21,9 +21,14 @@ int pinServoIzq = 8;
 
 int irSensorValues[] = {LOW, LOW, LOW, LOW};
 
+unsigned long seed = 12345; // Semilla inicial
+
+bool searching = false;
 
 void setup(){
-
+  Serial.begin(9600); // Initialize serial communication
+  pinMode(pinIrIzqIzq, INPUT); // Initialize pinIrIzqIzq
+  pinMode(pinIrDerDer, INPUT); // Initialize pinIrDerDer
   pinMode(pinIrDer, INPUT);
   pinMode(pinIrIzq, INPUT);
   
@@ -39,16 +44,48 @@ void setup(){
 
 void loop(){
   readIRSensor();
-  
-//  if(irSensorValues[0] == NO_LINEA && irSensorValues[3] == NO_LINEA && (irSensorValues[1] == LINEA || irSensorValues[2] == LINEA)){ 
-//   
-//}
-//  else if (irSensorValues[0] == LINEA )
-//  {}
-//  else if ( irSensorValues[2] == LINEA)
-//   {}
-//  else if (irSensorValues[0] == NO_LINEA && irSensorValues[2] == NO_LINEA)
-//   {}
+
+  if (irSensorValues[0] == NO_LINEA && irSensorValues[1] == LINEA && irSensorValues[2] == LINEA && irSensorValues[3] == NO_LINEA) {
+    forwardMotor();
+  } else if (irSensorValues[0] == LINEA && irSensorValues[1] == LINEA && irSensorValues[2] == LINEA && irSensorValues[3] == LINEA) {
+    forwardMotor(EXTRA_FORWARD_TIME / 2);
+  } else if (irSensorValues[0] == LINEA && irSensorValues[1] == NO_LINEA && irSensorValues[2] == NO_LINEA && irSensorValues[3] == LINEA) {
+    stopMotor();
+  } else if (irSensorValues[0] == NO_LINEA && irSensorValues[1] == NO_LINEA && irSensorValues[2] == NO_LINEA && irSensorValues[3] == NO_LINEA) {
+    //Para la pregunta 2 se usa esta linea de codigo:
+    //turnAround();
+    //Para la pregunta 3 se usa esta linea de codigo:
+    
+    probabilisticSearch();
+  } else if (irSensorValues[0] == LINEA && irSensorValues[1] == NO_LINEA && irSensorValues[2] == NO_LINEA && irSensorValues[3] == LINEA) {
+    turnLeft();
+  } else if (irSensorValues[0] == NO_LINEA && irSensorValues[1] == NO_LINEA && irSensorValues[2] == NO_LINEA && irSensorValues[3] == LINEA) {
+    turnRight();
+  } else if (irSensorValues[0] == LINEA && irSensorValues[1] == LINEA && irSensorValues[2] == NO_LINEA && irSensorValues[3] == NO_LINEA) {
+    turnLeft();
+  } else if (irSensorValues[0] == NO_LINEA && irSensorValues[1] == NO_LINEA && irSensorValues[2] == LINEA && irSensorValues[3] == LINEA) {
+    turnRight();
+  } else if (irSensorValues[0] == LINEA && irSensorValues[1] == LINEA && irSensorValues[2] == LINEA && irSensorValues[3] == NO_LINEA) {
+    turnLeft();
+  } else if (irSensorValues[0] == NO_LINEA && irSensorValues[1] == LINEA && irSensorValues[2] == LINEA && irSensorValues[3] == LINEA) {
+    turnRight();
+  } else if (irSensorValues[0] == LINEA && irSensorValues[1] == NO_LINEA && irSensorValues[2] == LINEA && irSensorValues[3] == NO_LINEA) {
+    forwardMotor();
+  } else if (irSensorValues[0] == NO_LINEA && irSensorValues[1] == LINEA && irSensorValues[2] == NO_LINEA && irSensorValues[3] == LINEA) {
+    forwardMotor();
+  } else if (irSensorValues[0] == LINEA && irSensorValues[1] == NO_LINEA && irSensorValues[2] == LINEA && irSensorValues[3] == LINEA) {
+    turnRight();
+  } else if (irSensorValues[0] == LINEA && irSensorValues[1] == LINEA && irSensorValues[2] == NO_LINEA && irSensorValues[3] == LINEA) {
+    turnLeft();
+  } else if (irSensorValues[0] == NO_LINEA && irSensorValues[1] == LINEA && irSensorValues[2] == NO_LINEA && irSensorValues[3] == NO_LINEA) {
+    turnLeft();
+  } else if (irSensorValues[0] == NO_LINEA && irSensorValues[1] == NO_LINEA && irSensorValues[2] == LINEA && irSensorValues[3] == NO_LINEA) {
+    turnRight();
+  }
+
+  if (searching) {
+    probabilisticSearchStep();
+  }
 }
 
 void readIRSensor(){
@@ -93,39 +130,54 @@ void forwardMotor(int xTime){
   delay(xTime);
 }
 
-
-
 void turnAround(){
   servoIzq.write(0); 
   servoDer.write(0);
-  delay(TURN_AROUND_TIME); 
+  delay(QUARTER_BACK_TIME); 
   forward();
 }
 
 void turnRight(){
-  forwardMotor(EXTRA_FORWARD_TIME);
+  forwardMotor(EXTRA_FORWARD_TIME / 4);
   servoIzq.write(0); 
   servoDer.write(0);
-  delay(QUARTER_BACK_TIME); 
+  delay(QUARTER_BACK_TIME / 4); 
   forward();
 }
 
 void turnLeft(){
-  forwardMotor(EXTRA_FORWARD_TIME);
+  forwardMotor(EXTRA_FORWARD_TIME / 4);
   servoIzq.write(180); 
   servoDer.write(180);
-  delay(QUARTER_BACK_TIME); 
+  delay(QUARTER_BACK_TIME / 4); 
   forward();
 }
 
+// int generateRandomBit() {
+//   seed = (1664525 * seed + 1013904223) % 4294967296; // LCG
+//   Serial.println("El bit aleatorio es: " + String(seed & 1)); // Correctly format the output
+//   return (seed & 1); // Devuelve el bit menos significativo
+// }
 
+void probabilisticSearch() {
+  searching = true;
+}
 
-
-
-
-
-
-
+void probabilisticSearchStep() {
+  int bit = 0;
+  seed = (1664525 * seed + 1013904223) % 4294967296; // LCG
+  Serial.println("El bit aleatorio es: " + String(seed & 1)); // Correctly format the output
+  bit = (seed & 1);
+  if (bit == 1) {
+    turnRight();
+  } else {
+    turnLeft();
+  }
+  forwardMotor(400);
+  if (digitalRead(pinIrIzq) == LINEA || digitalRead(pinIrDer) == LINEA) {
+    searching = false; // Stop searching if a line is found
+  }
+}
 
 
 
