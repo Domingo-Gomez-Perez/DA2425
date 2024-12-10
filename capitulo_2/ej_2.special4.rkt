@@ -1,13 +1,14 @@
 #lang racket
 
 #|
-Hecho por 
+Hecho por
 EZQUERRA CEBALLOS, CARLOS
 FERNÁNDEZ RIVERA, CRISTIAN MANUEL
 GOMEZ GARCIA, GABRIEL
 MUÑOZ FERNANDEZ, PAULA
 
-Special Challenge Exercise (Binding): Instead of matching, a more advanced operation is binding. Here is an example:
+Special Challenge Exercise (Binding):
+Instead of matching, a more advanced operation is binding. Here is an example:
 
 (bind '(job ?name ?job) record)
 ;  --> '((name (Hacker Alyssa P)) (job (computer programmer)))
@@ -18,31 +19,39 @@ Special Challenge Exercise (Binding): Instead of matching, a more advanced opera
 (bind '(job ?what) record)
 ; --> false (doesn't match)
 |#
-(define (bind pattern data)
-  (cond
-    ;; If the pattern is a symbol, it is a variable to be bound
-    ((symbol? pattern)
-     (list (list pattern data)))  ; Return a binding of the variable to the data
 
-    ;; If both are lists, we need to bind their structure
-    ((and (list? pattern) (list? data))
-     (if (equal? (length pattern) (length data))  ; Lengths must match
-         (apply append                            ; Combine all bindings
-                (map bind pattern data))        ; Bind each corresponding pair
-         #f))                                   ; Return false if lengths don't match
-
-    ;; If both are atoms and they are equal, return an empty binding (nothing to bind)
-    ((equal? pattern data) '())
-
-    ;; Otherwise, return false (no match)
-    (else #f)))
-
-;; Test cases
+; Definimos un registro de ejemplo
 (define record '(job (Hacker Alyssa P) (computer programmer)))
 
-(display (bind '(job ?name ?job) record))  ; --> '((name (Hacker Alyssa P)) (job (computer programmer)))
-(newline)
-(display (bind '(?type ?name (?what programmer)) record))  ; --> '((type job) (name (Hacker Alyssa P)) (what computer))
-(newline)
-(display (bind '(job ?what) record))  ; --> false
-(newline)
+; La función bind toma un patrón y datos, y devuelve un "binding" (vinculación) de las variables en el patrón con los datos correspondientes
+(define (bind pattern data)
+  (cond
+    ;; 1. Si el patrón es un símbolo, se considera una variable que debe ser vinculada
+    ;;    Se retorna una lista con la variable y su valor asociado en el dato
+    [(symbol? pattern) (list (list pattern data))]
+
+    ;; 2. Si tanto el patrón como los datos son listas, tenemos que hacer una vinculación recursiva de su estructura
+    ;;    Primero, verificamos si las listas tienen la misma longitud
+    [(and (list? pattern) (list? data))
+     (if (equal? (length pattern) (length data)) ; Las listas deben tener la misma longitud
+         (apply append ; Combinamos todos los "bindings"
+                (map bind pattern data)) ; Vinculamos cada par de elementos correspondientes
+         #f)] ; Si no tienen la misma longitud, no hay coincidencia, retornamos false
+
+    ;; 3. Si ambos son valores simples y son iguales, se retorna una lista vacía (no hace falta vincular nada)
+    [(equal? pattern data) '()]
+
+    ;; 4. Si no coinciden en ninguno de los casos anteriores, retornamos false
+    ;;    Esto significa que no se puede vincular el patrón con los datos
+    [else #f]))
+
+; Casos de prueba
+
+(bind '(job ?name ?job) record)
+;  --> '((name (Hacker Alyssa P)) (job (computer programmer)))
+
+(bind '(?type ?name (?what programmer)) record)
+; -->  '((type job) (name (Hacker Alyssa P)) (what computer))
+
+(bind '(job ?what) record)
+; --> false (doesn't match)
