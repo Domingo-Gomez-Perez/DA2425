@@ -5,17 +5,17 @@
 
 (define (seval exp environ)
   ; Evaluate a scheme expression
-  (cond ((primitiva? exp) ???)                            ; Primitive just "are". Return back
-        ((simbolo? exp) ???)  ; Symbols? Look up in the environment.
-        ((define? exp) ???)
-        ((if? exp) ???)
-        ((quote? exp) ???)
+  (cond ((primitiva? exp) exp)                            ; Primitive just "are". Return back
+        ((symbol? exp) (hash-ref environ exp))  ; Symbols? Look up in the environment.
+        ((define? exp) (seval-define exp environ))
+        ((if? exp) (seval-if exp environ))
+        ((quote? exp) (seval-quote exp environ))
         ; ((cond? exp) ...)
         ; ((let ...))
         ; ((delay...))
-        ((begin? exp) ???)
-        ((lambda? exp) ???)
-        ((procedure-application? exp) ???)
+        ((begin? exp) (seval-begin exp environ))
+        ((lambda? exp) (make-procedure (lambda-parameters exp) (lambda-body exp) environ))
+        ((procedure-application? exp) (apply (seval (car exp) environ) (map (lambda (e) (seval e environ)) (cdr exp))))
         (else (error "Error desconocido"))
         )
   )
@@ -28,15 +28,15 @@
 
 ;seguir metiendo movidas, es tedioso
 
-
-
-
 (define (primitiva? exp)
   (or (number? exp) (boolean? exp)))
 
 (define (aplicacion-procedimiento? exp)
   (list? exp)
   )
+
+(define (procedure-application? exp)
+  (list? exp))
 
 ; (define name value)
 
@@ -62,7 +62,8 @@
     )
   )
 
-
+(define (define-in-environment! name value environ)
+  (hash-set! environ name value))
 
 (define (quote? exp)
   (and (list? exp) (eq? (car exp) 'quote)))
@@ -113,6 +114,42 @@
   (cdr exp)      ; Note: this returns a *list* of the expressions
   )
 
+(define (symbol? exp)
+  (symbol? exp))
+
+(define (lambda? exp)
+  (and (list? exp) (eq? (car exp) 'lambda)))
+
+(define (lambda-parameters exp)
+  (cadr exp))
+
+(define (lambda-body exp)
+  (caddr exp))
+
+(define (make-procedure parameters body environ)
+  (lambda (args)
+    (let ((new-env (extend-environment parameters args environ)))
+      (seval body new-env))))
+
+(define (extend-environment parameters args environ)
+  (let ((new-env (make-hash)))
+    (for ([param parameters] [arg args])
+      (hash-set! new-env param arg))
+    (for ([key (hash-keys environ)])
+      (hash-set! new-env key (hash-ref environ key)))
+    new-env))
+
+(define (seval-begin exp environ)
+  (let loop ([exps (begin-expressions exp)])
+    (if (null? (cdr exps))
+        (seval (car exps) environ)
+        (begin (seval (car exps) environ)
+               (loop (cdr exps))))))
+
+(define (check-equal? actual expected message)
+  (if (equal? actual expected)
+      #t
+      (error message)))
 
 ;; Varias pruebas para ver que es lo que tiene que ocurrir
 (check-equal? (seval '42 environ) 42 "Primitives failed")

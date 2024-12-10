@@ -37,7 +37,7 @@ Try defining this:
 
 ```
 (define prog 
-   '(define (fact n) (if (= n 1) 1 (* n (fact (- n 1))))))
+   '(define (fact n) (if (= n 1) 1 (* n (fact (- n 1)))))) 
 ```
 
 Now, try pulling it apart:
@@ -102,7 +102,7 @@ use some features of Racket to help reduce the amount of code involved.
 As a stretch goal, we will also try to implement either "Lazy Scheme" as described in section 4.2
 or "Amb" as described in section 4.3.
 
-Please find the file `meta.rkt` to start doing your work.
+Please find the file `meta.rkt` to start doing your work. Make sure to complete the `seval` function to handle different types of expressions such as primitives, symbols, define, if, quote, begin, lambda, and procedure applications.
 
 
 
