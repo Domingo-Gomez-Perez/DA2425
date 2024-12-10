@@ -1,9 +1,5 @@
 #lang racket
 
-
-DUDAS: el 54 como funciona el map porque no va
-
-
 #|
 Chapter 3 : Modularity, Objects, and State
 

@@ -1,37 +1,55 @@
 #lang racket
+(require sicp)
 
-; Definición de cons-stream
-(define-syntax cons-stream
-  (syntax-rules ()
-    ((cons-stream a b) (cons a (delay b)))))
+; All the auxiliary definitions of subsection 3.5.1
 
-; Funciones para acceder a un stream
-(define (stream-car s) (car s))
-(define (stream-cdr s) (force (cdr s)))
+(define (stream-car stream) 
+  (car stream))
 
-; stream-map: Aplica una función a cada elemento de uno o más streams
-(define (stream-map proc . streams)
-  (if (null? (car streams))
-      '()
+(define (stream-cdr stream) 
+  (force (cdr stream)))
+
+(define (stream-map proc . argstreams)
+  (if (stream-null? (car argstreams))
+      the-empty-stream
       (cons-stream
-       (apply proc (map stream-car streams))
-       (apply stream-map (cons proc (map stream-cdr streams))))))
+       (apply proc (map stream-car argstreams))
+       (apply stream-map
+              (cons proc 
+                    (map stream-cdr
+                         argstreams))))))
 
-; add-streams: Suma elemento a elemento dos streams
-(define (add-streams s1 s2)
-  (stream-map + s1 s2))
 
-; Stream infinito de unos
-(define ones (cons-stream 1 ones))
+(define (stream-for-each proc s)
+  (if (stream-null? s)
+      'done
+      (begin 
+        (proc (stream-car s))
+        (stream-for-each proc 
+                         (stream-cdr s)))))
 
-; Stream de enteros infinitos
-(define integers
-  (cons-stream 1 (add-streams ones integers)))
 
-; Obtener los primeros 10 elementos del stream de enteros
-(define (take n stream)
+(define (display-stream s)
+  (stream-for-each display-line s))
+
+(define (display-line x)
+  (newline)
+  (display x))
+
+
+(define (add-streams s) (stream-map + s s) )
+(define s (cons-stream 1 (add-streams s)))
+
+; Referencia por índice:
+(define (stream-ref s n)
   (if (= n 0)
-      '()
-      (cons (stream-car stream) (take (- n 1) (stream-cdr stream)))))
+      (stream-car s)
+      (stream-ref (stream-cdr s) (- n 1))))
 
-(take 10 integers)
+; Obtener los primeros 5 factoriales como prueba
+(list (stream-ref s 0)
+      (stream-ref s 1)
+      (stream-ref s 2)
+      (stream-ref s 3)
+      (stream-ref s 4))
+; Resultado: '(1 1 2 6 24)
