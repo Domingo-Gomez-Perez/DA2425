@@ -5,9 +5,6 @@
       (cons line (next-line-it file)))))
 
 (define results (call-with-input-file "ej_pts_01.txt" next-line-it)) ;Te lo da como una lista de strings. OJO, los pares vienen en un solo String, luego los separo en dos
-;(car results)
-;(displayln "NADA")
-;(cdr results)
 
 (define (convert-into-pairs-list abomination)
   (define (string-iterado lista-strs) (car lista-strs))
@@ -24,8 +21,6 @@
   (sort lista (lambda (a b) (< (car a) (car b)))))
 
 (define lista (convert-into-pairs-list (cdddr results)))
-
-;(ordena-lista-menor lista)
 
 (define (segunda-mitad lista)
   (let ((len (length lista)))
