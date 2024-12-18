@@ -1,7 +1,13 @@
 #lang racket
 
-(define (add-streams s1 s2) 
-  (stream-map + s1 s2))
+(define (add-streams s1 s2)
+  (stream-cons
+   (+ (stream-car s1) (stream-car s2))
+   (add-streams (stream-cdr s1) (stream-cdr s2))))
+
+(define (stream-car stream) (car stream))
+(define (stream-cdr stream) (force (cdr stream)))
+
 (define s (stream-cons 1 (add-streams s s)))
 
 ;El flujo s comienza con el valor 1, como lo indica stream-cons 1.
