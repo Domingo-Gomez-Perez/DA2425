@@ -1,0 +1,14 @@
+
+T(n) = aT(n/b) + f(n)
+
+a = 1
+b = 1
+
+f(n) = O(n)
+c = 1
+
+O(n^1 * log n) = O(n log n)
+
+f(n) = O(n^2)
+c = 2
+O(n^2 * log n)

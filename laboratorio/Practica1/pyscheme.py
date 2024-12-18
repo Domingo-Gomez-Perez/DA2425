@@ -60,7 +60,6 @@ def seval(sexp):
                 return seval(sexp[2])
             else:
                 return seval(sexp[3])
-            return 
         elif sexp[0] == 'lambda':
             args = sexp[1]
             body = sexp[2]
