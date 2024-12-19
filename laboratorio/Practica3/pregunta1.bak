@@ -51,7 +51,7 @@
                   (bucle-2 ciudad-bucle-1 (+ j 1) par-mejor-ciudades distancia-mejor-ciudades)))))
   (display tamanho-lista)
   (newline)
-  (bucle-1 0 null +inf.0))
+  (bucle-1 0 null 99999999))
 
 (encuentra-mejor ciudades-1)
 

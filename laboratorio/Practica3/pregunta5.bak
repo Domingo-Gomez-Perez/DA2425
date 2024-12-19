@@ -27,24 +27,33 @@
 
 ;(ordena-lista-menor lista)
 
-(define (segunda-mitad lista longitud)
-  (if (= (length lista) (/ longitud 2))
-      lista
-      (segunda-mitad (cdr lista) longitud)
-      )
- )
-
-(define (primera-mitad-aux lista1 lista2 longitud)
-  (if (= (length lista) (/ longitud 2))
-      lista1
-      (primera-mitad-aux (append (list lista1) (list (car lista2))) (cdr lista2) longitud)
-      )
- )
-
-(define (primera-mitad list)
-  (primera-mitad-aux (car lista) (cdr lista) (length lista))
+(define (segunda-mitad lista)
+  (segunda-mitad-rec (ordena-lista-menor lista) (length lista))
   )
 
-(primera-mitad (list 1 2 3 4))
+(define (segunda-mitad-rec lista longitud)
+  (if (or (= (length lista) (/ longitud 2)) (null? lista))
+      lista
+      (segunda-mitad-rec (cdr lista) longitud)
+      )
+ )
 
-(segunda-mitad (list 1 2 3 4) 4)
+(define (primera-mitad lista)
+  (primera-mitad-rec (ordena-lista-menor lista) (/ (length lista) 2)))
+
+(define (primera-mitad-rec lista longitud)
+  (if (or (null? lista) (zero? longitud))
+      '()  ; Caso base: devolver una lista vacía
+      (cons (car lista) (primera-mitad-rec (cdr lista) (- longitud 1)) )
+  )
+)
+
+;(0 . 0)
+(length (primera-mitad (cdr lista)))
+;(10.4975 . 62336.2))
+
+;(10.4976 . 16911.7)
+(length (segunda-mitad (cdr lista)))
+;(20 . 2)
+
+;comentando primera o segunda mitad se ve claramente la lista y con length se ve se parte en 2 partes iguales

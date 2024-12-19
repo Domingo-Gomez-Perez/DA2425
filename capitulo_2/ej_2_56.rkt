@@ -57,3 +57,5 @@
          )
         (else (error "unknown expression 
                       type: DERIV" exp))))
+
+(deriv '(** x 2) 'x)

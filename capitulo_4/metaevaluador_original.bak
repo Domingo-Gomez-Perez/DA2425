@@ -5,48 +5,38 @@
 
 (define (seval exp environ)
   ; Evaluate a scheme expression
-  (cond ((primitiva? exp) exp)                            ; Primitive just "are". Return back
-        ((symbol? exp) (lookup-variable-value exp environ))  ; Symbols? Look up in the environment.
-        ((define? exp) (begin (define-name exp) (define-value exp)))
-        ((if? exp) (seval-if exp environ))
-        ((quote? exp) exp)
+  (cond ((primitiva? exp) ???)                            ; Primitive just "are". Return back
+        ((simbolo? exp) ???)  ; Symbols? Look up in the environment.
+        ((define? exp) ???)
+        ((if? exp) ???)
+        ((quote? exp) ???)
         ; ((cond? exp) ...)
         ; ((let ...))
         ; ((delay...))
-        ((begin? exp) exp)
-        ((lambda? exp) (make-procedure 
-          (lambda-parameters exp)
-          (lambda-body exp)
-          env))
-        ((procedure-application? exp) (apply (eval (operator exp) env)
-                (list-of-values 
-                 (operands exp) 
-                 env)))
+        ((begin? exp) ???)
+        ((lambda? exp) ???)
+        ((procedure-application? exp) ???)
         (else (error "Error desconocido"))
         )
   )
 
-
-
 ;defining the environment
+(define environ (make-hash))
+(hash-set! environ '+ +)
+(hash-set! environ '- -)
+(hash-set! environ '= =)
 
 ;seguir metiendo movidas, es tedioso
+
+
+
 
 (define (primitiva? exp)
   (or (number? exp) (boolean? exp)))
 
-(define (procedure-application? exp)
+(define (aplicacion-procedimiento? exp)
   (list? exp)
   )
-
-(define (make-if predicate 
-                 consequent 
-                 alternative)
-  (list 'if 
-        predicate 
-        consequent 
-        alternative))
-
 
 ; (define name value)
 
@@ -103,6 +93,7 @@
 (define (if-alternative exp)
   (cadddr exp)
   )
+
 ; como evaluar los if
 (define (seval-if exp environ)
   (if (seval (if-test exp) environ)        ;  Evaluate the test first

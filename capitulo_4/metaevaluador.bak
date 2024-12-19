@@ -5,9 +5,9 @@
 
 (define (seval exp environ)
   ; Evaluate a scheme expression
-  (cond ((primitiva? exp) ???)                            ; Primitive just "are". Return back
-        ((simbolo? exp) ???)  ; Symbols? Look up in the environment.
-        ((define? exp) ???)
+  (cond ((primitiva? exp) exp)                            ; Primitive just "are". Return back
+        ((symbol? exp) (lookup-variable-value exp environ))  ; Symbols? Look up in the environment.
+        ((define? exp) (begin (define-name exp) (define-value exp)))
         ((if? exp) ???)
         ((quote? exp) ???)
         ; ((cond? exp) ...)
@@ -20,23 +20,55 @@
         )
   )
 
+(define (lookup-variable-value var env)
+  (define (env-loop env)
+    (define (scan vars vals)
+      (cond ((null? vars)
+             (env-loop 
+              (enclosing-environment env)))
+            ((eq? var (car vars))
+             (car vals))
+            (else (scan (cdr vars) 
+                        (cdr vals)))))
+    (if (eq? env the-empty-environment)
+        (error "Unbound variable" var)
+        (let ((frame (first-frame env)))
+          (scan (frame-variables frame)
+                (frame-values frame)))))
+  (env-loop env)) 
+
 ;defining the environment
 (define environ (make-hash))
 (hash-set! environ '+ +)
 (hash-set! environ '- -)
 (hash-set! environ '= =)
+(hash-set! environ '* *)
+(hash-set! environ '/ /)
 
 ;seguir metiendo movidas, es tedioso
-
-
-
 
 (define (primitiva? exp)
   (or (number? exp) (boolean? exp)))
 
-(define (aplicacion-procedimiento? exp)
+(define (procedure-application? exp)
   (list? exp)
   )
+
+(define (make-if predicate 
+                 consequent 
+                 alternative)
+  (list 'if 
+        predicate 
+        consequent 
+        alternative))
+
+(define (if? exp) (tagged-list? exp 'if))
+(define (if-predicate exp) (cadr exp))
+(define (if-consequent exp) (caddr exp))
+(define (if-alternative exp)
+  (if (not (null? (cdddr exp)))
+      (cadddr exp)
+      'false))
 
 ; (define name value)
 

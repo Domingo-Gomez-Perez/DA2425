@@ -3,21 +3,23 @@
 ; meta.rkt
 ; The metacircular evaluator from section 4.1
 
+
+
 (define (seval exp environ)
   ; Evaluate a scheme expression
   (cond ((primitiva? exp) exp)                            ; Primitive just "are". Return back
-        ((symbol? exp) (lookup-variable-value exp environ))  ; Symbols? Look up in the environment.
-        ((define? exp) (begin (define-name exp) (define-value exp)))
+        ((simbolo? exp) (lookup-variable-value exp environ))  ; Symbols? Look up in the environment.
+        ((define? exp) (make-define exp))
         ((if? exp) (seval-if exp environ))
-        ((quote? exp) exp)
+        ((quote? exp) (quote-expression exp))
         ; ((cond? exp) ...)
         ; ((let ...))
         ; ((delay...))
-        ((begin? exp) exp)
-        ((lambda? exp) (make-procedure 
+        ((begin? exp) (begin-expressions exp))
+        ((lambda? exp) ((make-procedure 
           (lambda-parameters exp)
           (lambda-body exp)
-          env))
+          env)))
         ((procedure-application? exp) (apply (eval (operator exp) env)
                 (list-of-values 
                  (operands exp) 
@@ -26,36 +28,63 @@
         )
   )
 
-
-
 ;defining the environment
+(define environ (make-hash))
+(hash-set! environ '+ +)
+(hash-set! environ '- -)
+(hash-set! environ '= =)
+(hash-set! environ '* *)
+(hash-set! environ '/ /)
 
-;seguir metiendo movidas, es tedioso
+
+;COMPROBACIONES
 
 (define (primitiva? exp)
   (or (number? exp) (boolean? exp)))
 
-(define (procedure-application? exp)
-  (list? exp)
-  )
+(define (simbolo? exp) (symbol? exp))
 
-(define (make-if predicate 
-                 consequent 
-                 alternative)
-  (list 'if 
-        predicate 
-        consequent 
-        alternative))
-
-
-; (define name value)
-
-; Predicate to test
 (define (define? exp)
   (and (list? exp) (eq? (car exp) 'define))
   )
 
-; Selectors to extract information from the expression
+(define (if? exp)
+  (and (list? exp) (eq? (car exp) 'if)))
+
+(define (quote? exp)
+  (and (list? exp) (eq? (car exp) 'quote)))
+
+(define (aplicacion-procedimiento? exp)
+  (list? exp)
+  )
+
+(define (begin? exp)
+  (and (list? exp) (eq? (car exp) 'begin))
+  )
+
+(define (lambda? exp) 
+  (tagged-list? exp 'lambda))
+
+;SIMBOLOS
+(define (lookup-variable-value var env)
+  (define (env-loop env)
+    (define (scan vars vals)
+      (cond ((null? vars)
+             (env-loop 
+              (enclosing-environment env)))
+            ((eq? var (car vars))
+             (car vals))
+            (else (scan (cdr vars) 
+                        (cdr vals)))))
+    (if (eq? env the-empty-environment)
+        (error "Unbound variable" var)
+        (let ((frame (first-frame env)))
+          (scan (frame-variables frame)
+                (frame-values frame)))))
+  (env-loop env)) 
+
+
+;DEFINE
 (define (define-name exp)
   (cadr exp)
 )
@@ -64,7 +93,10 @@
   (caddr exp)
   )
 
-; Evaluacion
+(define (make-define exp)
+  define (define-name exp) (define-value exp)
+  )
+
 (define (seval-define exp environ)
   (let ((name (define-name exp))
         (value (define-value exp)))
@@ -72,10 +104,7 @@
     )
   )
 
-
-
-(define (quote? exp)
-  (and (list? exp) (eq? (car exp) 'quote)))
+;QUOTE
 
 (define (quote-expression exp)
   (cadr exp))
@@ -86,12 +115,8 @@
   (quote-expression exp)
   )
 
-; (if test consequence alternative)
+;IF
 
-(define (if? exp)
-  (and (list? exp) (eq? (car exp) 'if)))
-
-; Selectors
 (define (if-test exp)
   (cadr exp)
   )
@@ -103,7 +128,7 @@
 (define (if-alternative exp)
   (cadddr exp)
   )
-; como evaluar los if
+
 (define (seval-if exp environ)
   (if (seval (if-test exp) environ)        ;  Evaluate the test first
       (seval (if-consequence exp) environ)
@@ -111,19 +136,29 @@
       )
   )
 
+;BEGIN
 ; (begin exp1 ... expn)
 ; Evaluar todas las expresiones
-
-(define (begin? exp)
-  (and (list? exp) (eq? (car exp) 'begin))
-  )
-
 (define (begin-expressions exp)
   (cdr exp)      ; Note: this returns a *list* of the expressions
   )
 
+;LAMBDA
+(define (make-procedure parameters body env)
+  (list 'procedure parameters body env))
+(define (compound-procedure? p)
+  (tagged-list? p 'procedure))
+(define (procedure-parameters p) (cadr p))
+(define (procedure-body p) (caddr p))
+(define (procedure-environment p) (cadddr p))
 
-;; Varias pruebas para ver que es lo que tiene que ocurrir
+;PROCEDURE APLICATION
+(define (procedure-application? exp)
+  (list? exp)
+  )
+
+
+;PRUEBAS
 (check-equal? (seval '42 environ) 42 "Primitives failed")
 (check-equal? (seval 'foo environ) 123 "Symbol lookup failed")
 (seval '(define x 42) environ)

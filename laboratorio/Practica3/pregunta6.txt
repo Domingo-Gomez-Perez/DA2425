@@ -1,2 +1,0 @@
-Siendo f(n) = O(n), la complejidad temporal es O(n * log(n)).
-En caso de que f(n) = O(n^2), la complejidad temporal es O(n^2)
