@@ -23,6 +23,9 @@ def pon_en_env(x, y):
 
 
 env = {'+': lambda x, y: x+y,
+       '-': lambda x, y: x - y,
+       '*': lambda x, y: x * y,
+       '=': lambda x, y: x == y
     }
 
 def hacer_funcion(argumentos, cuerpo): # Equivalente de hacer una funcion
@@ -49,16 +52,31 @@ def seval(sexp):
     elif isinstance(sexp, tuple):
         if sexp[0] == 'if':
             "completar"
-            return 
+            condition = seval(sexp[1])
+            if condition:
+                return seval(sexp[2])  # Rama verdadera
+            else:
+                return seval(sexp[3])  # Rama falsa
+            
         elif sexp[0] == 'lambda':
             "completar"
-            return
+            argumentos = sexp[1]
+            cuerpo = sexp[2]
+            return hacer_funcion(argumentos, cuerpo)
+        
         elif sexp[0] == 'define':
-            "completar"
-            return
-        func = seval(sexp[0])
-        args = [seval(e) for e in sexp[1:]]
-        return func(*args)
+            nombre = sexp[1]
+            valor = sexp[2]
+            pon_en_env(nombre, valor)
+            return None
+        
+        else: 
+            func = seval(sexp[0])
+            print(func)
+
+            args = [seval(e) for e in sexp[1:]]
+            print(args)
+            return func(*args)
 
 # In writing seval, you are ONLY allowed to use the rules of Scheme
 # evaluation that you currently know about.  So far, this includes the
@@ -68,9 +86,10 @@ def seval(sexp):
 assert seval(42) == 42
 assert seval(('+', ('+', 2,1), 3)) == 6
 seval(('define', 'n', 5))
-
+assert seval(('if', ('=', 2, 2), 42, 0)) == 42
+ 
 assert seval('n') == 5
 
 # Now the ultimate test--can you run your procedure?
-#seval(fact)
-#assert seval(('fact', 'n')) == 120
+seval(fact)
+assert seval(('fact', 1)) == 120
