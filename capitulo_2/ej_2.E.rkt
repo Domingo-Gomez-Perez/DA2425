@@ -1,25 +1,16 @@
 #lang racket
 
 #|
-Hecho por
+Hecho por:
 EZQUERRA CEBALLOS, CARLOS
 FERNÁNDEZ RIVERA, CRISTIAN MANUEL
 GOMEZ GARCIA, GABRIEL
 MUÑOZ FERNANDEZ, PAULA
 
-Exercise 2.E: Put the generic "bob" and "alice" functions into their own namespace as shown. Point to ponder: Can the procedures for creating a bob-box and alice-box also be put into a namespace?
-
+Exercise 2.E: Poner las funciones genéricas "bob" y "alice" dentro de su propio espacio de nombres.
 |#
 
-; hay que encapsular todo lo de alice y bob pero la parte del registro tenemos que dejarla fuera
-; ya que los dos usan el mismo registro y necesitan sus metodos.
-
-; Lo de los tags
-(define (attach-tag tag contents) (cons tag contents))
-(define (type-tag datum) (car datum))
-(define (contents datum) (cdr datum))
-
-; lo de los registros
+; Registro y funciones de registro
 (define registry (make-hash))
 
 (define (register name tag proc)
@@ -28,10 +19,12 @@ Exercise 2.E: Put the generic "bob" and "alice" functions into their own namespa
 (define (lookup name tag)
   (hash-ref registry (list name tag)))
 
-; estos dos por fuera porque se necesitan dentro de las dos
+; Funciones para los tags
+(define (attach-tag tag contents) (cons tag contents))
+(define (type-tag datum) (car datum))
+(define (contents datum) (cdr datum))
 
-; Ahora los namespaces para alice y bob. (poner todo dentro del define)
-
+; Espacio de nombres de Alice
 (define (import-alice-box)
   (define (alice-make-box x y w h)
     (attach-tag 'alice-box (cons (cons x y) (cons w h))))
@@ -47,13 +40,15 @@ Exercise 2.E: Put the generic "bob" and "alice" functions into their own namespa
   (define (alice-area box)
     (* (alice-width box) (alice-height box)))
 
-  ; Lo registramos
+  ; Registrar las funciones de Alice
   (register 'width 'alice-box alice-width)
   (register 'height 'alice-box alice-height)
   (register 'area 'alice-box alice-area)
 
-  )
+  ; Retornar el constructor para crear cajas de Alice
+  alice-make-box)
 
+; Espacio de nombres de Bob
 (define (import-bob-box)
   (define (bob-make-box x y w h)
     (attach-tag 'bob-box (cons (cons x y) (cons w h))))
@@ -67,14 +62,19 @@ Exercise 2.E: Put the generic "bob" and "alice" functions into their own namespa
   (define (bob-area box)
     (* (bob-width box) (bob-height box)))
 
-  ; Lo registramos
+  ; Registrar las funciones de Bob
   (register 'width 'bob-box bob-width)
   (register 'height 'bob-box bob-height)
   (register 'area 'bob-box bob-area)
 
-  )
+  ; Retornar el constructor para crear cajas de Bob
+  bob-make-box)
 
-; ahora creamos los genericos
+; Importar los espacios de nombres de Alice y Bob
+(define alice-make-box (import-alice-box))
+(define bob-make-box (import-bob-box))
+
+; Funciones genéricas
 (define (width box)
   ((lookup 'width (type-tag box)) box))
 
@@ -84,17 +84,11 @@ Exercise 2.E: Put the generic "bob" and "alice" functions into their own namespa
 (define (area box)
   ((lookup 'area (type-tag box)) box))
 
-; Import boxes
-(define make-bob-box (import-bob-box))
-(define make-alice-box (import-alice-box))
+; Ahora podemos crear cajas usando los constructores
+(define a (alice-make-box 1 2 3 4))
+(define b (bob-make-box 1 2 3 4))
 
-(import-bob-box)
-(import-alice-box)
-; Now we can create boxes using the constructors
-(define a (make-alice-box 1 2 3 4))
-(define b (make-bob-box 1 2 3 4))
-
-; Test the width, height, and area functions
+; Probar las funciones de ancho, alto y área
 (display (width a))   ; -> 2
 (newline)
 (display (height a))  ; -> 2
@@ -108,7 +102,8 @@ Exercise 2.E: Put the generic "bob" and "alice" functions into their own namespa
 (newline)
 (display (area b))    ; -> 12
 (newline)
-; Display box structures
+
+; Mostrar las estructuras de las cajas
 (display a)
 (newline)
 (display b)
