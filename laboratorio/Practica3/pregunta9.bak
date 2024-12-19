@@ -1,0 +1,63 @@
+#lang racket
+(define (next-line-it file)
+  (let ((line (read-line file 'any)))
+    (unless (eof-object? line)
+      (cons line (next-line-it file)))))
+
+(define results (call-with-input-file "ej_pts_01.txt" next-line-it)) ;Te lo da como una lista de strings. OJO, los pares vienen en un solo String, luego los separo en dos
+
+(define (convert-into-pairs-list abomination)
+  (define (string-iterado lista-strs) (car lista-strs))
+  (define (corte-string pedazo-str) (string-split pedazo-str " "))
+  (define (num-izq str-cortado1) (string->number (car str-cortado1)))
+  (define (num-der str-cortado2) (string->number (cadr str-cortado2)))
+  
+  (cond ((string=? (car abomination) "))")  null)
+        (else  (cons (cons (num-izq (corte-string (string-iterado abomination)))
+                           (num-der(corte-string (string-iterado abomination))))
+                     (convert-into-pairs-list (cdr abomination))))))
+
+(define lista (convert-into-pairs-list (cdddr results))) ;Definición de variable principal
+
+(define (ordena-lista-menor-abcisas lista) ;TODO: ¿car es la pos en el eje de abcisas?
+  (sort lista (lambda (a b) (< (car a) (car b)))))
+
+(define (ordena-lista-menor-ordenadas lista) ;TODO: ¿cdr es la pos en el eje de ordeanadas?
+  (sort lista (lambda (a b) (< (cdr a) (cdr b)))))
+
+;Devuelve un cons con una lista de la primera mitad en la izquierda y una lista segunda mitad en cada lado
+(define (divide-lista-mitad lista)
+  (define (obten-mitad tamanho)
+    (if (odd? tamanho)
+        (/ (- tamanho 1) 2)
+        (/ tamanho 2)))
+
+  (define mitad-len (obten-mitad (length lista)))
+   
+  (define (divide-lista-mitad-rec lista-restante cont)
+    
+    (cond ((<= cont mitad-len) (let ((return-pair (divide-lista-mitad-rec (cdr lista-restante) (+ cont 1))))
+                                (cons (car return-pair) (cons (car lista-restante) (cdr return-pair)))))
+          ((> cont mitad-len) (cons lista-restante null))
+          )
+         
+    )
+    
+    (let ((return-value (divide-lista-mitad-rec lista 1)))
+      (cons (cdr return-value) (car return-value)))
+  )
+
+
+(define (algoritmo lista)
+  (define primer-par-listas-sorted-abcisas (divide-lista-mitad (ordena-lista-menor-abcisas lista)))
+  (define primer-par-listas-sorted-ordenadas (divide-lista-mitad (ordena-lista-menor-ordenadas lista)))
+
+  )
+
+
+
+(length (car par-listas-sorted-abcisas))
+(length (cdr par-listas-sorted-abcisas))
+(length (car par-listas-sorted-ordenadas))
+(length (cdr par-listas-sorted-ordenadas))
+
