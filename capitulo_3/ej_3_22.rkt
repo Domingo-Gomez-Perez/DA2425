@@ -68,26 +68,24 @@
 
 
 
-; Cola inicial
+; Initial queue
 (define queue (make-queue))
-(queue 'front-ptr)
-(queue 'rear-ptr)
-((queue 'empty-queue?))
+((queue 'empty-queue?))       ; #t
 
-; Insertamos (a, b, c)
-((queue 'insert-queue!) 'a)
-((queue 'insert-queue!) 'b)
-((queue 'insert-queue!) 'c)
-((queue 'empty-queue?))
+; Insert (a, b, c)
+((queue 'insert-queue!) 'a)   ; (mcons 'a '())
+((queue 'insert-queue!) 'b)   ; (mcons 'a (mcons 'b '()))
+((queue 'insert-queue!) 'c)   ; (mcons 'a (mcons 'b (mcons 'c '())))
+((queue 'empty-queue?))       ; #f
 
-; Observamos la cabeza
-((queue 'front-queue))
+; Observe the head
+((queue 'front-queue))        ; 'a
 
-; Observamos los punteros
-(queue 'front-ptr)
-(queue 'rear-ptr)
+; Observe the pointers
+(queue 'front-ptr)            ; (mcons 'a (mcons 'b (mcons 'c '())))
+(queue 'rear-ptr)             ; (mcons 'c '())
 
-; Quito elementos
-((queue 'delete-queue!))
-((queue 'delete-queue!))
-((queue 'delete-queue!))
+; Remove elements
+((queue 'delete-queue!))      ; (mcons 'b (mcons 'c '()))
+((queue 'delete-queue!))      ; (mcons 'c '())
+((queue 'delete-queue!))      ; '()

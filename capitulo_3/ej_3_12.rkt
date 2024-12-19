@@ -48,33 +48,33 @@
 (define z (append x y))
 z
 
-; Primero llamamos (append x y) con:
+; First we call (append x y) with:
 ; x = [ a | o ]---> [ b | '() ]
 ; y = [ c | o ]---> [ d | '() ]
 
-; Aplicamos (mcons (mcar x) (append (mcdr x) y))
+; We apply (mcons (mcar x) (append (mcdr x) y))
 ;   (mcar x) = 'a
 ;   (mcdr x) = [ b | '() ]
 ;   (append (mcdr x) y) = (append [ b | '() ] y)
 
-; Volvemos a llamar (append x y) con:
+; We call (append x y) again with:
 ; x = [ b | '() ]
 ; y = [ c | o ]---> [ d | '() ]
 
-; Aplicamos (mcons (mcar x) (append (mcdr x) y))
+; We apply (mcons (mcar x) (append (mcdr x) y))
 ;   (mcar x) = 'b
 ;   (mcdr x) = '()
 ;   (append (mcdr x) y) = (append '() y)
 
-; Volvemos a llamar (append x y) con:
+; We call (append x y) again with:
 ; x = '()
 ; y = [ c | o ]---> [ d | '() ]
 ; x es null por lo que devuelvo y
 
-; Vamos hacia atrás y retornamos finalmente:
+; Going back, we finally return:
 ; [ a | o ]---> [ b | o ]---> [ c | o ]---> [ d | '() ]
 
-; Al acabar, vemos que las variables x, y no han cambiado
+; At the end, we see that the variables x, y have not changed
 ; x = [ a | o ]---> [ b | '() ]
 ; y = [ c | o ]---> [ d | '() ]
 ; z = [ a | o ]---> [ b | o ]---> [ c | o ]---> [ d | '() ]
@@ -82,7 +82,7 @@ z
 
 (mcdr x)
 
-; Respuesta: Al no cambiar x,  (mcdr x) sigue siendo...
+; Response: Since x has not changed, (mcdr x) is still...
 ; (mcons 'b '())
 
  
@@ -94,28 +94,28 @@ z
 w
 
 
-; Primero llamamos (append! x y) con:
+; First we call (append! x y) with:
 ; x = [ a | o ]---> [ b | '() ]
 ; y = [ c | o ]---> [ d | '() ]
 
-; Aplicamos (set-mcdr! (last-pair x) y)
+; We apply (set-mcdr! (last-pair x) y)
 ;   (mcdr x) = [ b | '() ]
 ;   (last-pair (mcdr x)) = (last-pair [ b | '() ])
 
-; Llamamos (last-pair x) con:
+; We call (last-pair x) with:
 ;   x = [ b | '() ]
 ;
 ;   (mcdr x) = '()
-;   Como es null, devuelvo x = [ b | '() ]
+;   Since it is null, we return x = [ b | '() ]
 
-; Vamos hacia atrás y ejecutamos (set-mcdr! (last-pair x) y) con:
+; Going back, we execute (set-mcdr! (last-pair x) y) with:
 ;   (last-pair x) = [ b | '() ]
 ;   y = [ c | o ]---> [ d | '() ]
 ;
-;   transforma (mcdr x) en [ b | o ]---> [ c | o ]---> [ d | '() ]
-;   retorna x = [ a | o ]---> [ b | o ]---> [ c | o ]---> [ d | '() ]
+;   transforms (mcdr x) into [ b | o ]---> [ c | o ]---> [ d | '() ]
+;   returns x = [ a | o ]---> [ b | o ]---> [ c | o ]---> [ d | '() ]
 
-; Al acabar, vemos que las variables x, y no han cambiado
+; At the end, we see that the variables x, y have not changed
 ; x = [ a | o ]---> [ b | o ]---> [ c | o ]---> [ d | '() ]
 ; y = [ c | o ]---> [ d | '() ]
 ; z = [ a | o ]---> [ b | o ]---> [ c | o ]---> [ d | '() ]
@@ -123,5 +123,5 @@ w
 
 (mcdr x)
 
-; Respuesta: Al no cambiar x,  (mcdr x) sigue siendo...
-; (mcons 'b '())
+; Response: Now, x do changes along the process, so (mcdr x) is.
+; (mcons 'b (mcons 'c (mcons 'd '())))

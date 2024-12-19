@@ -29,20 +29,19 @@
 
 
 
-
-; Evaluación de (define acc (make-account 50))
+; Evaluation of (define acc (make-account 50))
 ; 
-; Llamamos a la función make account con el argumento 50. Después se crea 
-; el entorno E1 que contiene las funciones withdraw, deposit y dispatch. A 
-; su vez, se crea en E1 una variable local balance y almacena el valor 50.
-; Finalmente se devuelve la función dispatch, que es asignada en acc y esta
-; es a su vez guardada en global_env.
+; We call the `make-account` function with the argument 50. Then the environment
+; E1 is created, which contains the functions `withdraw`, `deposit`, and `dispatch`.
+; Meanwhile, in E1, a local variable balance is created and stores the value 50.
+; Finally, the dispatch function is returned, which is assigned to acc and
+; is stored in global_env.
 ;
 ;  _________________________________________________________
 ; |                                                         |
 ; |    global env:                                          |
-; |            - make-account:   - Código de la función     |
-; |                              - Puntero: global_env      |
+; |            - make-account:   - Function code            |
+; |                              - Pointer: global_env      |
 ; |            - acc:  o                                    |
 ; |____________________|____________________________________|
 ;                      |             ↑     
@@ -50,35 +49,35 @@
 ;                      |             |     
 ;  ____________________↓_____________|________________________ 
 ; |                 |                                         |
-; |     codigo      |     ambiente: E1                        |
+; |     code        |     environment: E1                     |
 ; |_________________|-----------------------------------------|
 ;                   |     balance: 50                         |
 ;                   |                                         |
-;                   |     withdraw:   - Código de la función  |
-;                   |                 - Puntero: E1           |
+;                   |     withdraw:   - Function code         |
+;                   |                 - Pointer: E1           |
 ;                   |                                         |
-;                   |     deposit:    - Código de la función  |
-;                   |                 - Puntero: E1           |
+;                   |     deposit:    - Function code         |
+;                   |                 - Pointer: E1           |
 ;                   |                                         |
-;                   |     dispatch:   - Código de la función  |
-;                   |                 - Puntero: E1           |
+;                   |     dispatch:   - Function code         |
+;                   |                 - Pointer: E1           |
 ;                   |_________________________________________|
 
 
 
 
-; Evaluación de ((acc 'deposit) 40)
+; Evaluation of ((acc 'deposit) 40)
 ; 
-; Llamamos a (acc 'deposit) que ejecutará la función dispatch con el argumento
-; 'deposit, devolviento así la función deposit. Esta función deposit, tomará el
-; valor 40 como argumendo y actualizará en E1 el valor local de la de balance 
-; (balance = balance + 40).
+; We call (acc 'deposit), which will execute the `dispatch` function with the
+; argument 'deposit, thus returning the `deposit` function. This function
+; will take the value 40 as an argument and update the local value of `balance`
+; in E1 (balance = balance + 40).
 ;
 ;  _________________________________________________________
 ; |                                                         |
 ; |    global env:                                          |
-; |            - make-account:   - Código de la función     |
-; |                              - Puntero: global_env      |
+; |            - make-account:   - Function code            |
+; |                              - Pointer: global_env      |
 ; |            - acc:  o                                    |
 ; |____________________|____________________________________|
 ;                      |             ↑     
@@ -86,35 +85,35 @@
 ;                      |             |     
 ;  ____________________↓_____________|________________________ 
 ; |                 |                                         |
-; |     codigo      |     ambiente: E1                        |
+; |     code        |     environment: E1                     |
 ; |_________________|-----------------------------------------|
 ;                   |     balance: 90                         |
 ;                   |                                         |
-;                   |     withdraw:   - Código de la función  |
-;                   |                 - Puntero: E1           |
+;                   |     withdraw:   - Function code         |
+;                   |                 - Pointer: E1           |
 ;                   |                                         |
-;                   |     deposit:    - Código de la función  |
-;                   |                 - Puntero: E1           |
+;                   |     deposit:    - Function code         |
+;                   |                 - Pointer: E1           |
 ;                   |                                         |
-;                   |     dispatch:   - Código de la función  |
-;                   |                 - Puntero: E1           |
+;                   |     dispatch:   - Function code         |
+;                   |                 - Pointer: E1           |
 ;                   |_________________________________________|
 
 
 
 
-; Evaluación de ((acc 'withdraw) 60)
+; Evaluation of ((acc 'withdraw) 60)
 ; 
-; Llamamos a (acc 'withdraw) que ejecutará la función dispatch con el argumento
-; 'withdraw, devolviendo así la función withdraw. Esta función withdraw, tomará el
-; valor 60 como argumento y actualizará en E1 el valor local de la de balance 
-; (balance = balance - 60).
+; We call (acc 'withdraw), which will execute the `dispatch` function with the
+; argument 'withdraw, thus returning the `withdraw` function. This function
+; will take the value 60 as an argument and update the local value of `balance`
+; in E1 (balance = balance - 60).
 ;
 ;  _________________________________________________________
 ; |                                                         |
 ; |    global env:                                          |
-; |            - make-account:   - Código de la función     |
-; |                              - Puntero: global_env      |
+; |            - make-account:   - Function code            |
+; |                              - Pointer: global_env      |
 ; |            - acc:  o                                    |
 ; |____________________|____________________________________|
 ;                      |             ↑     
@@ -122,18 +121,18 @@
 ;                      |             |     
 ;  ____________________↓_____________|________________________ 
 ; |                 |                                         |
-; |     codigo      |     ambiente: E1                        |
+; |     code        |     environment: E1                     |
 ; |_________________|-----------------------------------------|
 ;                   |     balance: 30                         |
 ;                   |                                         |
-;                   |     withdraw:   - Código de la función  |
-;                   |                 - Puntero: E1           |
+;                   |     withdraw:   - Function code         |
+;                   |                 - Pointer: E1           |
 ;                   |                                         |
-;                   |     deposit:    - Código de la función  |
-;                   |                 - Puntero: E1           |
+;                   |     deposit:    - Function code         |
+;                   |                 - Pointer: E1           |
 ;                   |                                         |
-;                   |     dispatch:   - Código de la función  |
-;                   |                 - Puntero: E1           |
+;                   |     dispatch:   - Function code         |
+;                   |                 - Pointer: E1           |
 ;                   |_________________________________________|
 
 
@@ -143,24 +142,24 @@
 
 ; Where is the local state for `acc` kept? 
 ;
-; El estado local de `acc` es guardado en el entorno E1, este almacena
-; tanto la variable balance como las funciones.
+; The local state of `acc` is kept in environment E1, which stores
+; both the balance variable and the functions.
 
 
 
 ; Suppose we define another account (define acc2 (make-account 100))
 ;
-; Al igual que antes se llama a la función make account con el argumento 
-; 100. Después se crea el entorno E2 que contiene las funciones withdraw,
-; deposit y dispatch. A su vez, se crea en E2 una variable local balance
-; y almacena el valor 100. Finalmente se devuelve la función dispatch, que
-; es asignada en `acc2` y esta es a su vez guardada en global_env.
+; As before, we call the `make-account` function with the argument 100.
+; Then the environment E2 is created, which contains the functions `withdraw`,
+; `deposit`, and `dispatch`. In E2, a local variable `balance` is created and 
+; stores the value 100. Finally, the dispatch function is returned, which is 
+; assigned to `acc2` and is stored in global_env.
 ;
 ;  __________________________________________________________________________________________________________________________________
 ; |                                                                                                                                  |
 ; |    global env:                                                                                                                   |
-; |            - make-account:   - Código de la función                                                                              |
-; |                              - Puntero: global_env                                                                               |
+; |            - make-account:   - Function code                                                                                     |
+; |                              - Pointer: global_env                                                                               |
 ; |                                                                                                                                  |
 ; |            - acc2: o---------------------------------------------------------------------+                                       |
 ; |                                                                                          |                                       |
@@ -171,33 +170,33 @@
 ;                      |             |                                                       |             |                            
 ;  ____________________↓_____________|________________________           ____________________↓_____________|________________________ 
 ; |                 |                                         |         |                 |                                         |
-; |     codigo      |     ambiente: E1                        |         |     codigo      |     ambiente: E2                        |
+; |     code        |     environment: E1                     |         |     code        |     environment: E2                     |
 ; |_________________|-----------------------------------------|         |_________________|-----------------------------------------|
-;                   |     balance: 30                         |                           |     balance: 100                         |
+;                   |     balance: 30                         |                           |     balance: 100                        |
 ;                   |                                         |                           |                                         |
-;                   |     withdraw:   - Código de la función  |                           |     withdraw:   - Código de la función  |
-;                   |                 - Puntero: E1           |                           |                 - Puntero: E2           |
+;                   |     withdraw:   - Function code         |                           |     withdraw:   - Function code         |
+;                   |                 - Pointer: E1           |                           |                 - Pointer: E2           |
 ;                   |                                         |                           |                                         |
-;                   |     deposit:    - Código de la función  |                           |     deposit:    - Código de la función  |
-;                   |                 - Puntero: E1           |                           |                 - Puntero: E2           |
+;                   |     deposit:    - Function code         |                           |     deposit:    - Function code         |
+;                   |                 - Pointer: E1           |                           |                 - Pointer: E2           |
 ;                   |                                         |                           |                                         |
-;                   |     dispatch:   - Código de la función  |                           |     dispatch:   - Código de la función  |
-;                   |                 - Puntero: E1           |                           |                 - Puntero: E2           |
+;                   |     dispatch:   - Function code         |                           |     dispatch:   - Function code         |
+;                   |                 - Pointer: E1           |                           |                 - Pointer: E2           |
 ;                   |_________________________________________|                           |_________________________________________|
 
 
 
 ; How are the local states for the two accounts kept distinct?
 ;
-; Las llamadas a make-account crean un nuevo entorno cada vez. Se ha creado
-; para acc E1 y para acc2 E2. De este modo cada entorno guarda una instancia
-; diferente de la variable balance.
+; The calls to make-account create a new environment each time. E1 was created
+; for acc and E2 for acc2. This way, each environment keeps a different instance
+; of the balance variable.
 
 
 ; Which parts of the environment structure are shared between `acc` and `acc2`?
 ;
-; Lo único que comparten esel global_env. Todo lo demás está contenido en sus
-; respectivos entornos.
-; Aunque podríamos pensar que el código de las funciones `deposit`, `withdraw`
-; y `dispatch` es el mismo en ambos entornos. Sin embargo esto no es así, aunque
-; podría ser una optimización a contemplar.
+; The only thing they share is the global_env. Everything else is contained in
+; their respective environments.
+; Although we might think that the code for the `deposit`, `withdraw`, and
+; `dispatch` functions is the same in both environments, this is not the case,
+; although it could be an optimization to consider.

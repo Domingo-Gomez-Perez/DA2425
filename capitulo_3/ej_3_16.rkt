@@ -23,7 +23,7 @@
 ; Encode these diagrams as data structures using Racket `mcons`.
 
 
-; Caso return 3:
+; Case return 3:
 
 (define x1 (mcons 'a '()))
 (define x2 (mcons 'b '()))
@@ -34,12 +34,12 @@
 
 ; x1 = [ a | o ]---> [ b | o ]---> [ c | '() ]
 
-(count-pairs x1)
+(count-pairs x1) 
 ; 3
 
 
 
-; Caso return 4:
+; Case return 4:
 
 (define y1 (mcons 'a '()))
 (define y2 (mcons 'b '()))
@@ -62,7 +62,7 @@
 
 
 
-; Caso return 7:
+; Case return 7:
 
 (define z1 (mcons 'a '()))
 (define z2 (mcons 'b '()))
@@ -92,7 +92,7 @@
 
 
 
-; Caso never returns:
+; Case never returns:
 
 (define w1 (mcons 'a '()))
 (define w2 (mcons 'b '()))
@@ -108,4 +108,4 @@
 ;        |_______________________________|
 
 ; (count-pairs w1)
-; generamos así un bucle infinito
+; This generates an infinite loop
