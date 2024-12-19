@@ -6,53 +6,46 @@
 (define (seval exp environ)
   ; Evaluate a scheme expression
   (cond ((primitiva? exp) exp)                            ; Primitive just "are". Return back
-        ((symbol? exp) (lookup-variable-value exp environ))  ; Symbols? Look up in the environment.
-        ((define? exp) (begin (define-name exp) (define-value exp)))
+        ((simbolo? exp) (hash-ref environ exp))  ; Symbols? Look up in the environment.
+        ((define? exp) (seval-define exp environ))
         ((if? exp) (seval-if exp environ))
-        ((quote? exp) exp)
+        ((quote? exp) (quote-expression exp))
         ; ((cond? exp) ...)
         ; ((let ...))
         ; ((delay...))
-        ((begin? exp) exp)
-        ((lambda? exp) (make-procedure 
-          (lambda-parameters exp)
-          (lambda-body exp)
-          env))
-        ((procedure-application? exp) (apply (eval (operator exp) env)
-                (list-of-values 
-                 (operands exp) 
-                 env)))
+        ((begin? exp) (begin-expressions exp))
+        ((lambda? exp) (make-lambda exp))
+        ((aplicacion-procedimiento? exp) ((hash-ref environ (car exp) (cdr exp)) ))
         (else (error "Error desconocido"))
         )
   )
 
-
-
 ;defining the environment
-
-;seguir metiendo movidas, es tedioso
+(define environ (make-hash))
+(hash-set! environ '+ +)
+(hash-set! environ '- -)
+(hash-set! environ '= =)
+(hash-set! environ '* *)
+(hash-set! environ '/ /)
 
 (define (primitiva? exp)
   (or (number? exp) (boolean? exp)))
 
-(define (procedure-application? exp)
+(define (aplicacion-procedimiento? exp)
   (list? exp)
   )
 
-(define (make-if predicate 
-                 consequent 
-                 alternative)
-  (list 'if 
-        predicate 
-        consequent 
-        alternative))
-
+(define (simbolo? exp) (symbol? exp))
 
 ; (define name value)
 
 ; Predicate to test
 (define (define? exp)
   (and (list? exp) (eq? (car exp) 'define))
+  )
+
+(define (lambda? exp)
+  (and (list? exp) (eq? (car exp) 'lambda))
   )
 
 ; Selectors to extract information from the expression
@@ -71,14 +64,27 @@
     (define-in-environment! name (seval value environ) environ)
     )
   )
+(define (define-in-environment! name (seval value environ) environ)
 
-
+  )
+(hash-set! environ '/ /)
 
 (define (quote? exp)
   (and (list? exp) (eq? (car exp) 'quote)))
 
 (define (quote-expression exp)
   (cadr exp))
+
+(define (lambda-args exp)
+  (cadr exp)
+  )
+(define (lambda-cuerpo exp)
+  (caddr exp)
+  ) 
+
+(define (make-lambda exp)
+  (lambda (lambda-args exp) (lambda-cuerpo exp))
+  )
 
 ; Como evaluar el operador quote
 
@@ -103,6 +109,7 @@
 (define (if-alternative exp)
   (cadddr exp)
   )
+
 ; como evaluar los if
 (define (seval-if exp environ)
   (if (seval (if-test exp) environ)        ;  Evaluate the test first
@@ -141,6 +148,5 @@
 
 (seval '(define fact (lambda (n) (if (= n 0) 1 (* n (fact (- n 1)))))) environ)
 (check-equal? (seval '(fact 5) environ) 120 "fact failed")
-
 
 
