@@ -1,0 +1,27 @@
+#lang racket
+(define (busca x estructura)
+  (busca_aux x estructura 0 (last-pos-struct estructura)))
+
+(define (busca_aux x estructura i j)
+  (define pos (truncate (/ (- (+ i j) 1) 2)))
+  (define elem (posicion estructura pos))
+  (if (>= i j) null
+      (cond ((= elem x) pos)
+            ((< elem x) (busca_aux x estructura (+ pos 1) j))
+            (else (busca_aux x estructura i pos))
+            )
+      )
+  )
+  
+(define (last-pos-struct estructura)
+  (if (pair? estructura)
+      (last-pos-list estructura 1) (vector-length estructura)))
+
+(define (last-pos-list list i)
+  (if (null? (cdr list)) i (last-pos-list (cdr list) (+ i 1))))
+
+(define (posicion estructura i)
+  (if (pair? estructura) (elem-lista-enlazada estructura i) (vector-ref estructura i)))
+
+(define (elem-lista-enlazada celda i)
+  (if (= i 0) (car celda) (elem-lista-enlazada (cdr celda) (- i 1))))

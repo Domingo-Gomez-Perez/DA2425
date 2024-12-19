@@ -1065,10 +1065,10 @@ expressions in the following definition:
 ```
 (define (sum term a next b)
   (define (iter a result)
-    (if ⟨??⟩
-        ⟨??⟩
-        (iter ⟨??⟩ ⟨??⟩)))
-  (iter ⟨??⟩ ⟨??⟩))
+    (if (??)
+        (??)
+        (iter (??) (??))))
+  (iter (??) (??)))
 ```
 
 **Exercise 1.31:**
