@@ -1,9 +1,0 @@
-#lang racket
-(define (height-bob box)
-  cdr (cdr box))
-
-(define (make-box-alice x1 y1 x2 y2)
-  (cons (cons x1 y1) (cons x2 y2)))
-
-(define (width-alice box)
-  (- (car (cdr box)) (car (car box))))

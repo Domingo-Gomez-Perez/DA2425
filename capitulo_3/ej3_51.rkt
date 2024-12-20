@@ -27,4 +27,8 @@
    (enumerate-interval 0 10)))
 
 (stream-ref x 5)
+;Los elementos previos al indice 5 no se imprimen, pero al llegar al quinto elemento
+;la funcion "show" se aplica sobre este elemento, imprimiento su valor (5)
 (stream-ref x 7)
+;Los elementos previos al indice 7 no se imprimen, pero al llegar al quinto elemento
+;la funcion "show" se aplica sobre este elemento, imprimiento su valor (7)

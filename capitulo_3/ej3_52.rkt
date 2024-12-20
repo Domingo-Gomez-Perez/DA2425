@@ -6,16 +6,17 @@
         (stream-cons start 
                      (enumerate-interval (+ start 1) stop))))
 
-(define (stream-map proc s)
-    (if (stream-empty? s) 
-        empty-stream
-        (stream-cons (proc (stream-first s))
-                     (stream-map proc (stream-rest s)))))
+(define (display-stream s)
+     (if (stream-empty? s)
+         '()
+         (begin (display (stream-first s))
+                (newline)
+                (display-stream (stream-rest s)))))
 
 
 (define sum 0)
 
-(define (accum x)
+(define (accum x) 
   (set! sum (+ x sum))
   sum)
 
@@ -31,12 +32,13 @@
    (lambda (x) 
      (= (remainder x 5) 0)) seq))
 
-(define (display-stream s)
-     (if (stream-empty? s) '()
-         (begin (display (stream-first s))
-                (newline)
-                (display-stream (stream-rest s)))))
-
 
 (stream-ref y 7)
+;sum = 136
+;(posicion 7 del stream)
+
 (display-stream z)
+;Muestra los numeros divisibles entre 5 -> 10 15 45 55 105 120 190 210 '()
+;sum = 210;
+
+
