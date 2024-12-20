@@ -53,4 +53,17 @@ the following sequence? [footnote](http://sarabander.github.io/sicp/html/3_002e5
 (stream-ref x 7) ; se muestra 9 dos veces
 
 
+;Ejemplo 2
 
+(define y 
+  (stream-map ;Crea un stream de lo siguiente
+   show 
+   (enumerate-interval 5 20)))
+
+;Con el valor que se pone como argumento se obtiene el numero que está en ese índice teniendo en cuenta el comienzo del intervalo que se ponga
+;y lo muestra 2 veces por el display y porque se devuelve el numero resultante. Para (stream-ref y 5) se obtiene 10 que es el valor del número que
+;encuentra en la posición 5 de los números 5,6,7,8,9,10; estos números son resultantes del incremento en 1 empezando desde 5.
+; Para el (stream-ref y 7) sería 12.
+
+(stream-ref y 5) ; se muestra 10 dos veces
+(stream-ref y 7) ; se muestra 12 dos veces

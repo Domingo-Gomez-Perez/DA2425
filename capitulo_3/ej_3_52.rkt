@@ -68,7 +68,7 @@ without using the optimization provided by `memo-proc`?  Explain.
 (define x
   (stream-filter 
    (lambda (x) 
-     (= (remainder x 5) 0)) seq)))
+     (= (remainder x 5) 0)) seq))
 
 (define (display-stream s)
   (stream-for-each displayln s))
@@ -83,7 +83,7 @@ and `display-stream` expressions?
 (stream-ref y 7)
 #|
 Va sumando todos los números que están entre el 1 y el 20, y cuando se encuentre el octavo numero par, es cuando se devuelve el valor,
-en este caso es 136.
+en este caso es 136 (1,3,6,10,15,21,28,36,45,55,66,78,91,105,120,136).
 
 |#
 (stream-ref y 0)
@@ -118,3 +118,33 @@ al invocar a la función.
 Entonces, el uso del delay mejor aspectos como complejidad temporal, espacial, facilidad
 de escribir,facilidad de cambiar programas...
 |#
+
+
+(define (add-stream s1 s2)
+  (cond
+    ; Si s1 está vacío, devolver s2
+    ((null? s1) s2)  
+    
+    ; Si s2 está vacío, devolver s1
+    ((null? s2) s1)  
+    
+    ; Caso recursivo
+    (else
+     (stream-cons (+ (stream-first s1) (stream-first s2))  ; Sumar los primeros elementos
+                  (add-stream (stream-rest s1) (stream-rest s2))))))  ; Recursión perezosa para el resto del flujo
+
+; Crear los flujos de ejemplo
+(define s1 (stream-cons 1 (stream-cons 2 (stream-cons 3 '()))))
+(define s2 (stream-cons 4 (stream-cons 5 (stream-cons 6 '()))))
+
+; Llamar a add-stream
+(define resultado (add-stream s1 s2))
+
+; Acceder a los primeros 3 elementos
+(displayln (stream-first resultado))  ; 5 (1 + 4)
+(displayln (stream-first (stream-rest resultado)))  ; 7 (2 + 5)
+(displayln (stream-first (stream-rest (stream-rest resultado))))  ; 9 (3 + 6)
+
+;La función add-stream sin el uso de map toma dos flujos, s1 y s2, y devuelve un nuevo flujo en el que cada elemento es la suma de los primeros
+;elementos de s1 y s2. Luego, el proceso se repite recursivamente para el resto de los flujos.la función crea un flujo cuyos primeros elementos
+;son las sumas de los primeros elementos de s1 y s2, y el resto de los elementos se obtiene recursivamente.

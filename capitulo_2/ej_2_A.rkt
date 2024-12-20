@@ -57,7 +57,7 @@ b        -> '((1 . 2) 3 . 4)
 (define (alice-area box)
     (* (alice-width box) (alice-height box)))
 
-
+;Ejemplos
 (define a (alice-make-box 1 2 3 4))
 (alice-width a)
 (alice-height a)

@@ -94,42 +94,57 @@ Build in the rules that anything raised to the power 0 is 1 and anything raised 
 
 
 (define (deriv-exponentiation exp var)
-  (cond ((number? exp) 0)
-        ((variable? exp)
-         (if (same-variable? exp var) 1 0))
-        ((sum? exp)
-         (make-sum (deriv (addend exp) var)
-                   (deriv (augend exp) var)))
-        ((product? exp)
-         (make-sum
-          (make-product 
-           (multiplier exp)
-           (deriv (multiplicand exp) var))
-          (make-product 
-           (deriv (multiplier exp) var)
-           (multiplicand exp))))
-        
-        ((exponentiation? exp)
-         (let((exp-base (base exp))
-           (exp-exponente (exponent exp)))
-          (if (number? exp-exponente)
-         (make-product exp-exponente (make-exponentiation exp-base (exp-exponente - 1))
-                  (deriv exp-base exp-exponente))
+  ; Usamos `cond` para manejar diferentes tipos de expresiones algebraicas
 
-            (error "El exponente no es un numero")
-         )
-           
-         )
+  (cond 
+    ; Caso 1: Si `exp` es un número
+    ((number? exp) 0)  ; La derivada de un número es siempre 0
 
-         )
+    ; Caso 2: Si `exp` es una variable
+    ((variable? exp)
+     (if (same-variable? exp var) 1 0)) 
+     ; Si la variable de la expresión es igual a la variable `var`, la derivada es 1
+     ; Si no es la misma variable, la derivada es 0
 
-        
-        (else (error "unknown expression 
-                      type: DERIV" exp))))
+    ; Caso 3: Si `exp` es una suma
+    ((sum? exp)
+     (make-sum 
+       (deriv (addend exp) var)   ;; Derivada del primer sumando
+       (deriv (augend exp) var))) ;; Derivada del segundo sumando
+     ; La derivada de una suma es la suma de las derivadas de sus partes
+
+    ; Caso 4: Si `exp` es un producto
+    ((product? exp)
+     (make-sum
+       (make-product 
+         (multiplier exp) 
+         (deriv (multiplicand exp) var))  ;; Derivada usando la regla del producto
+       (make-product 
+         (deriv (multiplier exp) var) 
+         (multiplicand exp))))  ;; Derivada usando la regla del producto
+     ; La derivada de un producto es la derivada del primer factor multiplicado por el segundo,
+     ; más el primer factor multiplicado por la derivada del segundo factor
+
+    ; Caso 5: Si `exp` es una exponenciación
+    ((exponentiation? exp)
+     (let ((exp-base (base exp))           ; Obtenemos la base de la exponenciación
+           (exp-exponente (exponent exp)))  ; Obtenemos el exponente de la exponenciación
+       (if (number? exp-exponente)          ; Si el exponente es un número:
+           (make-product
+            exp-exponente
+            (make-exponentiation exp-base (sub1 exp-exponente))  ; Reducimos el exponente
+            (deriv exp-base var))           ; Derivada de la base respecto a `var`
+           (error "El exponente no es un numero"))))  ; Si el exponente no es un número, lanzamos un error
+
+    ; Caso 6: Si `exp` es un tipo desconocido
+    (else (error "unknown expression type: DERIV" exp)))) 
+    ; Si `exp` no es de ningún tipo conocido (ni número, ni variable, ni suma, ni producto, ni exponenciación),
+    ; lanzamos un error indicando que el tipo de expresión es desconocido.
 
 
 
 
+;Ejemplos
 (deriv '(+ x 3) 'x)
 
 

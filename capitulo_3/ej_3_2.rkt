@@ -45,8 +45,14 @@ Note: This exercise is similar to writing a decorator in Python.
 
 
 (define s (make-monitored sqrt))
+;Ejemplos
 
+;Ejemplo1
 (s 100)
+(s 20)
 
+(s 'how-many-calls?)
 
+;Ejemplo2
+(s 'reset-count)
 (s 'how-many-calls?)

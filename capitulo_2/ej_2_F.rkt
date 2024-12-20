@@ -31,7 +31,9 @@
 (define (height box)
     (box 'height))
 
-; Example usage for Bob:
+;Ejemplo1
+(display "Bob's box")
+(displayln "")
 (define a (make-bob-box 1 2 3 4))
 (a 'width)     ; -> 3
 (a 'height)    ; -> 4
@@ -63,10 +65,11 @@
 
 (define (contents datum) (cdr datum))
 
-
-;Example usage for Alice
+(display "Alice's box")
+(displayln "")
+;Ejemplo2
 (define b (make-alice-box 1 2 3 4))
-(b'width)     ; -> 3
-(b 'height)    ; -> 4
-(b 'area)
-(b 'type)      ; -> 'bob-box
+(b'width)     ; -> 2
+(b 'height)    ; -> 2
+(b 'area)      ; 4
+(b 'type)      ; -> 'alice-box
