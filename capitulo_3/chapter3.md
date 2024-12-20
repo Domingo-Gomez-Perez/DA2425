@@ -21,7 +21,7 @@ mutate a value.   Here is an example:
 
 (define (withdraw amt)
     (begin
-        (set! balance (- balance mt))
+        (set! balance (- balance amt))
 	balance
     )
 )
