@@ -1,6 +1,4 @@
 #lang racket
-(require math/statistics)
-
 ; Leer fichero
 (define (next-line-it file)
   (let ((line (read-line file 'any)))
@@ -30,48 +28,11 @@
        (sqrt (+ (* (- (car tuplaX) (car tuplaY)) (- (car tuplaX) (car tuplaY))) (* (- (cdr tuplaX) (cdr tuplaY)) (- (cdr tuplaX) (cdr tuplaY)))))
                                           ))
 
-; Busca el elemento i en la lista
-(define (buscaElemento i lista) (
-    buscaElemento-rec i lista 0
-                                 ))
-
-(define (buscaElemento-rec i lista cont) (
-    if (= i cont)
-       (car lista)
-       (buscaElemento-rec i (cdr lista) (+ cont 1))
-                                          ))
-; Para encontrar el mínimo por fuerza bruta hay que comparar las distancias entre todos los puntos con todos
-; los puntos, lo cual significa que hay que recorrer una matriz.
-
-; min-i es el bucle exterior que recorre las filas de la matriz.
-(define (min-i i lista minimo) (
-    if (< i (length lista))
-       (min-i (+ i 1) lista (min-j (buscaElemento i lista) lista minimo))
-       minimo
-                         ))
-
-; min-j es el bucle interior que recorre las columnas de la matriz.
-(define (min-j elem lista minimo) (
-    if (null? lista)
-       minimo
-       (if (< (calculaDistancia elem (car lista)) minimo)
-           (min-j elem (cdr lista) (calculaDistancia elem (car lista)))
-           (min-j elem (cdr lista) minimo)
-        )
-                                   ))
-; Función principal que busca el mínimo en una lista por fuerza bruta.
-(define (min lista) (
-    min-i 0 lista MAX
-                     ))
 
 ; Constante necesaria para comparar y encontrar el mínimo.
 (define MAX 999999999)
 
-; Ejemplo
-(displayln 'Ejemplo)
-(min (list (cons 1 2) (cons 3 4) (cons 5 6) (cons 7 8) (cons 9 10)))
-; Debería devolver 0, porque como compara todos los puntos con todos, también compara un punto con sigo mismo, y la distancia entre dos puntos iguales es 0. Pero como eso no sería
-; correcto, está arreglado.
+
 
 ; Esta versión por fuerza bruta tiene una complejidad de O(n^2), pero se puede reducir a O((n^2-n)/2) recorriendo solo el triángulo superior de la matriz, excluyendo también la diagonal
 ; Para ello usaré la función reduce
@@ -96,8 +57,4 @@
     reduce (lambda (x y) (mini x (calculaDistancia elem y))) lista MAX
                                    ))
 
-; Ejemplo
-(minimo (list (cons 1 2) (cons 3 4) (cons 5 6) (cons 7 8) (cons 9 10)))
-(displayln 'Solución)
-(min listaPtos)
 (minimo listaPtos)
