@@ -2,7 +2,6 @@
 
 ; meta.rkt
 ; The metacircular evaluator from section 4.1
-(require rackunit)
 
 (define (seval exp environ)
   ; Evaluate a scheme expression
@@ -17,7 +16,7 @@
         ((begin? exp) (seval-begin exp environ))
         ((lambda? exp) (seval-lambda exp environ))
         ((procedure-application? exp) (apply-procedure
-                                       (seval (car exp) environ);Operador
+                                       (seval (car exp-environ));Operador
                                        (map (lambda (arg)(seval arg environ))
                                             (cdr exp))));Argumentos
                                        
@@ -38,9 +37,8 @@
 
 ;seguir metiendo movidas, es tedioso
 (define (lookup-in-enviroment v environ)
-  (hash-ref environ v (lambda() (error "Variable no definida: "v)))
+  (hash-ref environ var (lambda() (error "Variable no definida: "v)))
   )
-
 
 (define (define-in-enviroment! nombre valor environ)
   (hash-set! environ nombre valor)
@@ -54,7 +52,7 @@
   )
 
 (define (simbolo? exp)
-  (symbol? exp))
+  (sybol? expr))
 
 
 
@@ -79,7 +77,7 @@
 (define (seval-define exp environ)
   (let ((name (define-name exp))
         (value (define-value exp)))
-    (define-in-enviroment! name (seval value environ) environ)
+    (define-in-environment! name (seval value environ) environ)
     )
   )
 
@@ -98,15 +96,13 @@
   )
 ; Evaluar begin
 (define (seval-begin exp environ)
-  (define exprs (begin-expressions exp))
-  (cond
-    [(null? exprs) #f] 
-    [(null? (cdr exprs)) (seval (car exprs) environ)] 
-    [else
-     (begin
-       (seval (car exprs) environ) 
-       (seval-begin (cons 'begin (cdr exprs)) environ))]))
+  (let ((expr (begin-expr exp)))
+    (fold1
+     (lambda (e_last)(serval e environ)
+       #f
+       expr)
 
+     )))
 ;Evaluar lambda
 (define (seval-lambda exp environ)
   (let ((params (lambda-parametres exp))
@@ -120,19 +116,6 @@
        )
 
   )
-
-(define (lambda-parametres exp)
-(cadr exp)
-  )
-
-(define (lambda-body exp)
-(caddr exp)
-  )
-
-(define (make-procedure params body environ)
-  (lambda (args)
-         (let ((new-environ(extend-environment params args environ)))
-           (seval body new-environ))))
 ;Evaluar procidimientos
 (define (procedure-application? exp)
   (and (list? exp)
@@ -144,8 +127,8 @@
 (define (apply-procedure proc args)
   (cond
   ((procedure? proc)
-   (apply proc args))
-  
+   (apply proc (map(lambda (arg) (seval arg environ))args)))
+
   ((and (pair? proc) (eq? (car proc) 'lambda))
   (aplica-lambda proc args))
 
@@ -156,29 +139,11 @@
 
 (define (aplica-lambda proc args)
   (let* ((params (cadr proc))
-         (body (caddr proc))
+         (body (cddr proc))
          (new-environ (extend-environment params args environ)))
     (seval body new-environ))) 
          
-
-(define (extend-environment params args parent-environ)
-  (let extend-helper ((params params)
-                      (args (if (list? args) args (list args))) ;Se necesita que args sea siempre una lista, si no da problemas
-                      (display args)
-                      (new-environ (make-hash)))
-    (cond
-      [(and (null? params) (null? args))
-       (begin
-         (hash-set! new-environ 'parent parent-environ)
-         new-environ)]
-      [(or (null? params) (null? args))
-       (error "Error de aridad")]
-      [else
-       (begin
-          
-         (hash-set! new-environ (car params) (car args))
-         (extend-helper (cdr params) (cdr args) new-environ parent-environ))])))
-
+  
 
 
 
@@ -224,7 +189,6 @@
   )
 
 
-(define-in-enviroment! 'foo 123 environ)
 ;; Varias pruebas para ver que es lo que tiene que ocurrir
 (check-equal? (seval '42 environ) 42 "Primitives failed")
 (check-equal? (seval 'foo environ) 123 "Symbol lookup failed")
@@ -237,15 +201,12 @@
 (check-equal? (seval '(if (< 2 3) 1 (/ 1 0)) environ) 1 "if-true failed")
 (check-equal? (seval '(if (< 3 2) (/ 1 0) 1) environ) 1 "if-false failed")
 
-
-
 ; Procedures
-
 (seval '(define square (lambda (x) (* x x))) environ)
-;(check-equal? (seval '(square 4) environ) 16 "square failed") ;Hay un error que es que toma el valor de x de las funciones anteriores de 42
+(check-equal? (seval '(square 4) environ) 16 "square failed")
 
 (seval '(define fact (lambda (n) (if (= n 0) 1 (* n (fact (- n 1)))))) environ)
-;(check-equal? (seval '(fact 5) environ) 120 "fact failed")
+(check-equal? (seval '(fact 5) environ) 120 "fact failed")
 
 
 
