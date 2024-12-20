@@ -5,64 +5,52 @@
 
 (define (seval exp environ)
   ; Evaluate a scheme expression
-  (cond ((primitiva? exp) ???)                            ; Primitive just "are". Return back
-        ((simbolo? exp) ???)  ; Symbols? Look up in the environment.
-        ((define? exp) ???)
-        ((if? exp) ???)
-        ((quote? exp) ???)
-        ; ((cond? exp) ...)
-        ; ((let ...))
-        ; ((delay...))
-        ((begin? exp) ???)
-        ((lambda? exp) ???)
-        ((procedure-application? exp) ???)
-        (else (error "Error desconocido"))
-        )
-  )
+  (cond ((primitiva? exp) exp)                             ; Primitive just "are". Return back
+        ((symbol? exp) (lookup exp environ))               ; Symbols: look up in the environment
+        ((define? exp) (seval-define exp environ))         ; Define statements
+        ((if? exp) (seval-if exp environ))                 ; If expressions
+        ((quote? exp) (seval-quote exp environ))           ; Quoting
+        ((begin? exp) (seval-begin exp environ))           ; Begin blocks
+        ((lambda? exp) (make-procedure exp environ))       ; Lambda expressions
+        ((procedure-application? exp) (apply-procedure exp environ)) ; Procedure application
+        (else (error "Unknown expression type" exp))))
 
-;defining the environment
-(define environ (make-hash))
-(hash-set! environ '+ +)
-(hash-set! environ '- -)
-(hash-set! environ '= =)
+; Environment implementation
+(define (make-environment)
+  (make-hash))
 
-;seguir metiendo movidas, es tedioso
+(define (lookup var environ)
+  (if (hash-has-key? environ var)
+      (hash-ref environ var)
+      (error "Variable not found in environment" var)))
 
+(define (define-in-environment! name value environ)
+  (hash-set! environ name value))
 
-
-
+; Predicates and selectors
 (define (primitiva? exp)
   (or (number? exp) (boolean? exp)))
 
-(define (aplicacion-procedimiento? exp)
-  (list? exp)
-  )
-
-; (define name value)
-
-; Predicate to test
 (define (define? exp)
-  (and (list? exp) (eq? (car exp) 'define))
-  )
+  (and (list? exp) (eq? (car exp) 'define)))
 
-; Selectors to extract information from the expression
 (define (define-name exp)
-  (cadr exp)
-)
+  (cadr exp))
 
 (define (define-value exp)
-  (caddr exp)
-  )
+  (caddr exp))
 
-; Evaluacion
-(define (seval-define exp environ)
-  (let ((name (define-name exp))
-        (value (define-value exp)))
-    (define-in-environment! name (seval value environ) environ)
-    )
-  )
+(define (if? exp)
+  (and (list? exp) (eq? (car exp) 'if)))
 
+(define (if-test exp)
+  (cadr exp))
 
+(define (if-consequence exp)
+  (caddr exp))
+
+(define (if-alternative exp)
+  (cadddr exp))
 
 (define (quote? exp)
   (and (list? exp) (eq? (car exp) 'quote)))
@@ -70,49 +58,88 @@
 (define (quote-expression exp)
   (cadr exp))
 
-; Como evaluar el operador quote
-
-(define (seval-quote exp environ)
-  (quote-expression exp)
-  )
-
-; (if test consequence alternative)
-
-(define (if? exp)
-  (and (list? exp) (eq? (car exp) 'if)))
-
-; Selectors
-(define (if-test exp)
-  (cadr exp)
-  )
-
-(define (if-consequence exp)
-  (caddr exp)
-  )
-
-(define (if-alternative exp)
-  (cadddr exp)
-  )
-
-; como evaluar los if
-(define (seval-if exp environ)
-  (if (seval (if-test exp) environ)        ;  Evaluate the test first
-      (seval (if-consequence exp) environ)
-      (seval (if-alternative exp) environ)
-      )
-  )
-
-; (begin exp1 ... expn)
-; Evaluar todas las expresiones
-
 (define (begin? exp)
-  (and (list? exp) (eq? (car exp) 'begin))
-  )
+  (and (list? exp) (eq? (car exp) 'begin)))
 
 (define (begin-expressions exp)
-  (cdr exp)      ; Note: this returns a *list* of the expressions
-  )
+  (cdr exp))
 
+(define (lambda? exp)
+  (and (list? exp) (eq? (car exp) 'lambda)))
+
+(define (procedure-application? exp)
+  (list? exp))
+
+; Evaluators for specific constructs
+(define (seval-define exp environ)
+  (let ((name (define-name exp))
+        (value (define-value exp)))
+    (define-in-environment! name (seval value environ) environ)
+    name))
+
+(define (seval-quote exp environ)
+  (quote-expression exp))
+
+(define (seval-if exp environ)
+  (if (seval (if-test exp) environ)
+      (seval (if-consequence exp) environ)
+      (seval (if-alternative exp) environ)))
+
+(define (seval-begin exp environ)
+  (define (eval-sequence exps environ)
+    (if (null? (cdr exps))
+        (seval (car exps) environ)
+        (begin (seval (car exps) environ)
+               (eval-sequence (cdr exps) environ))))
+  (eval-sequence (begin-expressions exp) environ))
+
+; Procedure application
+(define (make-procedure exp environ)
+  (list 'procedure (cadr exp) (cddr exp) environ))
+
+(define (procedure-parameters proc)
+  (cadr proc))
+
+(define (procedure-body proc)
+  (caddr proc))
+
+(define (procedure-environment proc)
+  (cadddr proc))
+
+(define (apply-procedure exp environ)
+  (let* ((proc (seval (car exp) environ))
+         (args (map (lambda (e) (seval e environ)) (cdr exp))))
+    (cond
+      ((and (list? proc) (eq? (car proc) 'procedure)) ; User-defined procedure
+       (let ((new-env (extend-environment (procedure-parameters proc) args
+                                          (procedure-environment proc))))
+         (seval-begin (cons 'begin (procedure-body proc)) new-env)))
+      ((procedure? proc) ; Built-in procedure
+       (apply proc args))
+      (else (error "Unknown procedure type" proc)))))
+
+; Extend environment with parameters and arguments
+(define (extend-environment params args parent-env)
+  (let ((new-env (hash-copy parent-env)))
+    (for-each (lambda (param arg)
+                (define-in-environment! param arg new-env))
+              params args)
+    new-env))
+
+(define (check-equal? actual expected message)
+  (if (equal? actual expected)
+      #t
+      (error message)))
+
+; Testing the evaluator
+(define environ (make-environment))
+(hash-set! environ '+ +)
+(hash-set! environ '- -)
+(hash-set! environ '* *)
+(hash-set! environ '/ /)
+(hash-set! environ '< <)
+(hash-set! environ '= =)
+(hash-set! environ 'foo 123)
 
 ;; Varias pruebas para ver que es lo que tiene que ocurrir
 (check-equal? (seval '42 environ) 42 "Primitives failed")
@@ -132,6 +159,3 @@
 
 (seval '(define fact (lambda (n) (if (= n 0) 1 (* n (fact (- n 1)))))) environ)
 (check-equal? (seval '(fact 5) environ) 120 "fact failed")
-
-
-
