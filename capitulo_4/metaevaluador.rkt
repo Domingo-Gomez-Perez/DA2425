@@ -1,137 +1,399 @@
 #lang racket
+(require rackunit)
 
-; meta.rkt
+; Para el desarrollo de este trabajo hemos colaborado en grupo,
+; tal y como se sugiere en la línea 97 del archivo chapter4.md.
+
 ; The metacircular evaluator from section 4.1
 
-(define (seval exp environ)
-  ; Evaluate a scheme expression
-  (cond ((primitiva? exp) ???)                            ; Primitive just "are". Return back
-        ((simbolo? exp) ???)  ; Symbols? Look up in the environment.
-        ((define? exp) ???)
-        ((if? exp) ???)
-        ((quote? exp) ???)
-        ; ((cond? exp) ...)
-        ; ((let ...))
-        ; ((delay...))
-        ((begin? exp) ???)
-        ((lambda? exp) ???)
-        ((procedure-application? exp) ???)
+(define (seval exp env)
+  (cond ((primitive? exp) exp)                                                                               ; Primitive just "are". Return back
+        ((symbol? exp) (lookup-variable-value exp env))                                                      ; Symbol? Look up in the environment.
+        ((define? exp) (seval-define exp env))                                                               ; Define? Evaluate the define expression.
+        ((if? exp)     (seval-if exp env))                                                                   ; If? Evaluate the if expression.
+        ((quote? exp)  (seval-quote exp))                                                                    ; Quote? Evaluate the quote expression.
+        ((cond? exp)   (seval (cond->if exp) env))                                                           ; Cond? Evaluate the cond expression.
+;       ((let? exp)    (seval-let exp env))                                                                  ; Let? Evaluate the let expression.
+;       ((delay? exp)  (seval-delay exp env))                                                                ; Delay? Evaluate the delay expression.
+        ((begin? exp)  (seval-begin (begin-actions exp) env))                                                ; Begin? Evaluate the begin expression.
+        ((lambda? exp) (make-procedure (lambda-parameters exp) (lambda-body exp) env))                       ; Lambda? Evaluate the lambda expression.
+        ((procedure-application? exp) (seval-procedure (seval (operator exp) env) (list-of-values (operands exp) env)))                                                      ; Procedure application? Apply the procedure.
         (else (error "Error desconocido"))
-        )
   )
-
-;defining the environment
-(define environ (make-hash))
-(hash-set! environ '+ +)
-(hash-set! environ '- -)
-(hash-set! environ '= =)
-
-;seguir metiendo movidas, es tedioso
-
-
-
-
-(define (primitiva? exp)
-  (or (number? exp) (boolean? exp)))
-
-(define (aplicacion-procedimiento? exp)
-  (list? exp)
-  )
-
-; (define name value)
-
-; Predicate to test
-(define (define? exp)
-  (and (list? exp) (eq? (car exp) 'define))
-  )
-
-; Selectors to extract information from the expression
-(define (define-name exp)
-  (cadr exp)
 )
 
-(define (define-value exp)
-  (caddr exp)
-  )
+; Defining the environment
+(define env (make-hash))
+(hash-set! env '+ +)
+(hash-set! env '- -)
+(hash-set! env '* *)
+(hash-set! env '/ /)
+(hash-set! env 'modulo modulo)
+(hash-set! env 'abs abs)
+(hash-set! env 'expt expt)
+(hash-set! env 'sqrt sqrt)
+(hash-set! env 'max max)
+(hash-set! env 'min min)
+(hash-set! env 'apply apply)
+(hash-set! env '= =)
+(hash-set! env '< <)
+(hash-set! env '> >)
+(hash-set! env '<= <=)
+(hash-set! env '>= >=)
+(hash-set! env 'not not)
+(hash-set! env 'boolean? boolean?)
+(hash-set! env 'car car)
+(hash-set! env 'cdr cdr)
+(hash-set! env 'cons cons)
+(hash-set! env 'list list)
+(hash-set! env 'length length)
+(hash-set! env 'append append)
+(hash-set! env 'reverse reverse)
+(hash-set! env 'list-ref list-ref)
+(hash-set! env 'list-tail list-tail)
+(hash-set! env 'null? null?)
+(hash-set! env 'member member)
+(hash-set! env 'map map)
+(hash-set! env 'string? string?)
+(hash-set! env 'string-length string-length)
+(hash-set! env 'string-append string-append)
+(hash-set! env 'substring substring)
+(hash-set! env 'string->list string->list)
+(hash-set! env 'list->string list->string)
+(hash-set! env 'string=? string=?)
+(hash-set! env 'symbol? symbol?)
+(hash-set! env 'symbol->string symbol->string)
+(hash-set! env 'string->symbol string->symbol)
+(hash-set! env 'display display)
+(hash-set! env 'newline newline)
+(hash-set! env 'number? number?)
+(hash-set! env 'integer? integer?)
+(hash-set! env 'real? real?)
+(hash-set! env 'exact? exact?)
+(hash-set! env 'inexact? inexact?)
+(hash-set! env 'pair? pair?)
+(hash-set! env 'procedure? procedure?)
+(hash-set! env 'eq? eq?)
+(hash-set! env 'equal? equal?)
+(hash-set! env 'vector? vector?)
+(hash-set! env 'make-vector make-vector)
+(hash-set! env 'vector-ref vector-ref)
+(hash-set! env 'vector-set! vector-set!)
+(hash-set! env 'vector-length vector-length)
+(hash-set! env 'vector vector)
+(hash-set! env 'vector->list vector->list)
+(hash-set! env 'list->vector list->vector)
+(hash-set! env 'vector-fill! vector-fill!)
+(hash-set! env 'null null)
+(hash-set! env 'zero? zero?)
+(hash-set! env 'positive? positive?)
+(hash-set! env 'negative? negative?)
+(hash-set! env 'even? even?)
+(hash-set! env 'odd? odd?)
+(hash-set! env 'char? char?)
+(hash-set! env 'char=? char=?)
+(hash-set! env 'char<? char<?)
+(hash-set! env 'char>? char>?)
+(hash-set! env 'char<=? char<=?)
+(hash-set! env 'char>=? char>=?)
+(hash-set! env 'char->integer char->integer)
+(hash-set! env 'integer->char integer->char)
+(hash-set! env 'char-upcase char-upcase)
+(hash-set! env 'char-downcase char-downcase)
 
-; Evaluacion
-(define (seval-define exp environ)
-  (let ((name (define-name exp))
-        (value (define-value exp)))
-    (define-in-environment! name (seval value environ) environ)
-    )
-  )
+(hash-set! env 'foo 123)
 
 
 
-(define (quote? exp)
-  (and (list? exp) (eq? (car exp) 'quote)))
 
-(define (quote-expression exp)
-  (cadr exp))
+; -------- Primitive -----------
 
-; Como evaluar el operador quote
+(define (primitive? exp)
+  (or (number? exp) (boolean? exp)))
 
-(define (seval-quote exp environ)
-  (quote-expression exp)
-  )
 
-; (if test consequence alternative)
+
+
+; ---------- Symbol ------------
+
+(define (lookup-variable-value var env)
+  (define (env-loop env)
+    (if (hash-has-key? env var)
+        (hash-ref env var)
+        (let ((parent (hash-ref env 'parent #f)))
+          (if parent
+              (env-loop parent)
+              (error "Unbound variable" var)))))
+  (env-loop env))
+
+
+
+
+; ---------- Define ------------
+
+(define (define? exp)
+  (tagged-list? exp 'define))
+
+(define (definition-variable exp)
+  (if (symbol? (cadr exp))
+      (cadr exp)
+      (caadr exp)))
+
+(define (definition-value exp)
+  (if (symbol? (cadr exp))
+      (caddr exp)
+      (make-lambda (cdadr exp) (cddr exp))))
+
+
+; Creator of an environment new element
+(define (define-in-environment! name value environment)
+  (hash-set! env name value))
+
+; Seval of a define
+(define (seval-define exp env)
+  (define-in-environment! (definition-variable exp) (seval (definition-value exp) env) env))  
+
+
+
+
+; ----------- If -------------
 
 (define (if? exp)
-  (and (list? exp) (eq? (car exp) 'if)))
+  (tagged-list? exp 'if))
 
-; Selectors
-(define (if-test exp)
-  (cadr exp)
-  )
+; Selector to extract the predicate from the expression
+(define (if-predicate exp)
+  (cadr exp))
 
-(define (if-consequence exp)
-  (caddr exp)
-  )
+; Selector to extract the consequent  from the expression
+(define (if-consequent  exp)
+  (caddr exp))
 
+; Selector to extract the alternative from the expression
 (define (if-alternative exp)
-  (cadddr exp)
-  )
+  (if (not (null? (cdddr exp)))
+      (cadddr exp)
+      'false))
 
-; como evaluar los if
-(define (seval-if exp environ)
-  (if (seval (if-test exp) environ)        ;  Evaluate the test first
-      (seval (if-consequence exp) environ)
-      (seval (if-alternative exp) environ)
-      )
-  )
-
-; (begin exp1 ... expn)
-; Evaluar todas las expresiones
-
-(define (begin? exp)
-  (and (list? exp) (eq? (car exp) 'begin))
-  )
-
-(define (begin-expressions exp)
-  (cdr exp)      ; Note: this returns a *list* of the expressions
-  )
+; Seval of an if statement
+(define (seval-if exp env)
+  (if (true? (seval (if-predicate exp) env))
+      (seval (if-consequent exp) env)
+      (seval (if-alternative exp) env)))
 
 
-;; Varias pruebas para ver que es lo que tiene que ocurrir
-(check-equal? (seval '42 environ) 42 "Primitives failed")
-(check-equal? (seval 'foo environ) 123 "Symbol lookup failed")
-(seval '(define x 42) environ)
-(check-equal? (seval 'x environ) 42 "Simple define failed")
-(seval '(define y (+ 2 3)) environ)
-(check-equal? (seval 'y environ) 5 "Expression define failed")
-(check-equal? (seval '(quote x) environ) 'x "Quoting failed")
+; Auxiliary method (used in `cond->if`)
 
-(check-equal? (seval '(if (< 2 3) 1 (/ 1 0)) environ) 1 "if-true failed")
-(check-equal? (seval '(if (< 3 2) (/ 1 0) 1) environ) 1 "if-false failed")
+(define (make-if predicate consequent alternative)
+  (list 'if predicate consequent alternative))
+
+
+
+
+
+; ---------- Quote -----------
+
+(define (quote? exp)
+  (tagged-list? exp 'quote))  
+
+(define (seval-quote exp)
+  (cadr exp))
+
+
+; Auxiliary method
+
+(define (tagged-list? exp tag)
+  (if (pair? exp)
+      (eq? (car exp) tag)
+      false))
+
+
+
+
+; ---------- Cond ------------
+
+(define (cond? exp) 
+  (tagged-list? exp 'cond))
+
+(define (cond-clauses exp)
+   (cdr exp))
+
+(define (cond-else-clause? clause)
+  (eq? (cond-predicate clause) 'else))
+
+(define (cond-predicate clause) 
+  (car clause))
+
+(define (cond-actions clause) 
+  (cdr clause))
+
+(define (cond->if exp)
+  (expand-clauses (cond-clauses exp)))
+
+(define (expand-clauses clauses)
+  (if (null? clauses)
+      'false
+      (let ((first (car clauses)) (rest (cdr clauses)))
+        (if (cond-else-clause? first)
+            (if (null? rest)
+                (sequence->exp (cond-actions first))
+                (error "ELSE clause isn't last: COND->IF" clauses))
+            (make-if (cond-predicate first) (sequence->exp (cond-actions first)) (expand-clauses rest))))))
+
+
+
+; ---------- Begin -----------
+
+(define (begin? exp) 
+  (tagged-list? exp 'begin))
+
+(define (begin-actions exp)
+   (cdr exp))
+
+(define (last-exp? seq) 
+    (null? (cdr seq)))
+
+(define (first-exp seq) 
+    (car seq))
+
+(define (rest-exps seq)
+   (cdr seq))
+
+(define (seval-begin exps env)
+  (cond ((last-exp? exps) (seval (first-exp exps) env))
+        (else (seval (first-exp exps) env) (seval-begin (rest-exps exps) env))))
+
+
+
+; Auxiliary methods (used in `cond->if`)
+
+(define (sequence->exp seq)
+  (cond ((null? seq) seq)
+        ((last-exp? seq) (first-exp seq))
+        (else (make-begin seq))))
+
+(define (make-begin seq) (cons 'begin seq))
+
+
+
+
+
+
+; --------- Lambda ----------
+
+(define (lambda? exp) 
+  (tagged-list? exp 'lambda))
+
+(define (lambda-parameters exp)
+   (cadr exp))
+
+(define (lambda-body exp)
+   (cddr exp))
+
+(define (make-lambda parameters body)
+  (cons 'lambda (cons parameters body)))
+
+
+; Auxiliary methods
+
+(define (make-procedure parameters body env)
+  (list 'procedure parameters body env))
+
+
+
+
+
+; --------- Procedure-application ----------
+
+(define (procedure-application? exp)
+    (pair? exp))
+
+; Seval-procedure
+
+(define (seval-procedure procedure arguments)
+  (cond ((primitive-procedure? procedure) (apply-primitive-procedure procedure arguments))
+        ((compound-procedure? procedure) (seval-begin (procedure-body procedure) (extend-environment (procedure-parameters procedure) arguments (procedure-environment procedure))))
+        (else (error "Unknown procedure type: APPLY" procedure))))
+
+
+; Auxiliary methods
+
+(define (operands exp) (cdr exp))
+(define (no-operands? ops) (null? ops))
+(define (first-operand ops) (car ops))
+(define (rest-operands ops) (cdr ops))
+
+(define (list-of-values exps env)
+  (if (no-operands? exps)
+      '()
+      (cons (seval (first-operand exps) env)
+            (list-of-values 
+             (rest-operands exps) 
+             env))))
+
+
+; Primitive procedure methods
+
+(define (primitive-procedure? proc)
+  (procedure? proc))
+
+(define (apply-primitive-procedure proc args)
+  (apply proc args))
+
+
+; Compound procedure methods
+
+(define (compound-procedure? p)
+  (tagged-list? p 'procedure))
+
+(define (procedure-parameters p) (cadr p))
+(define (procedure-body p) (caddr p))
+(define (procedure-environment p) (cadddr p))
+(define (operator exp) (car exp))
+
+(define (extend-environment vars vals base-env)
+  (let ((new-env (make-hash)))
+    (for-each (lambda (var val) (hash-set! new-env var val)) vars vals)
+    (hash-set! new-env 'parent base-env)
+    new-env))
+
+
+
+
+
+; -------------- Testing predicates ------------------
+
+(define (true? x)
+  (not (eq? x false)))
+
+(define (false? x)
+  (eq? x false))
+
+
+
+
+
+
+
+
+
+
+
+; Varias pruebas para ver que es lo que tiene que ocurrir
+(check-equal? (seval '42 env) 42 "Primitives failed")
+(check-equal? (seval 'foo env) 123 "Symbol lookup failed")
+(seval '(define x 42) env)
+(check-equal? (seval 'x env) 42 "Simple define failed")
+(seval '(define y (+ 2 3)) env)
+(check-equal? (seval 'y env) 5 "Expression define failed")
+(check-equal? (seval '(quote x) env) 'x "Quoting failed")
+
+(check-equal? (seval '(if (< 2 3) 1 (/ 1 0)) env) 1 "if-true failed")
+(check-equal? (seval '(if (< 3 2) (/ 1 0) 1) env) 1 "if-false failed")
 
 ; Procedures
-(seval '(define square (lambda (x) (* x x))) environ)
-(check-equal? (seval '(square 4) environ) 16 "square failed")
+(seval '(define square (lambda (x) (* x x))) env)
+(check-equal? (seval '(square 4) env) 16 "square failed")
 
-(seval '(define fact (lambda (n) (if (= n 0) 1 (* n (fact (- n 1)))))) environ)
-(check-equal? (seval '(fact 5) environ) 120 "fact failed")
-
-
-
+(seval '(define fact (lambda (n) (if (= n 0) 1 (* n (fact (- n 1)))))) env)
+(check-equal? (seval '(fact 5) env) 120 "fact failed")
