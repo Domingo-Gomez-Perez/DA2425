@@ -4,8 +4,8 @@ int NO_LINEA = LOW;
 int LINEA = HIGH; 
 
 int TURN_AROUND_TIME = 1700;
-int QUARTER_BACK_TIME = 400;
-int EXTRA_FORWARD_TIME = 225;
+int QUARTER_BACK_TIME = 50;
+int EXTRA_FORWARD_TIME = 10;
 
 
 Servo servoIzq;
@@ -20,6 +20,13 @@ int pinServoDer = 9;
 int pinServoIzq = 8;
 
 int irSensorValues[] = {LOW, LOW, LOW, LOW};
+
+//Variables LCG
+long seed = 98765;    // Semilla inicial
+long a = 75;     // Multiplicador
+long c = 74;  // Incremento
+long m = 65537;  // 2^16 + 1
+long randomBit = 0;
 
 
 void setup(){
@@ -39,16 +46,16 @@ void setup(){
 
 void loop(){
   readIRSensor();
-  
-//  if(irSensorValues[0] == NO_LINEA && irSensorValues[3] == NO_LINEA && (irSensorValues[1] == LINEA || irSensorValues[2] == LINEA)){ 
-//   
-//}
-//  else if (irSensorValues[0] == LINEA )
-//  {}
-//  else if ( irSensorValues[2] == LINEA)
-//   {}
-//  else if (irSensorValues[0] == NO_LINEA && irSensorValues[2] == NO_LINEA)
-//   {}
+ 
+  if(irSensorValues[0] == NO_LINEA && irSensorValues[3] == NO_LINEA && (irSensorValues[1] == LINEA || irSensorValues[2] == LINEA)){ 
+	forwardMotor() ;
+  } else if (irSensorValues[0] == LINEA ) {
+	turnLeft();
+  } else if ( irSensorValues[3] == LINEA) {
+	turnRight();
+  } else if (irSensorValues[0] == NO_LINEA && irSensorValues[2] == NO_LINEA) {
+	probabilisticSearch();
+  }//Fuera de circuito,  o random para elegir.
 }
 
 void readIRSensor(){
@@ -110,6 +117,15 @@ void turnRight(){
   forward();
 }
 
+
+void turn90Right(){
+  forwardMotor(EXTRA_FORWARD_TIME);
+  servoIzq.write(0); 
+  servoDer.write(0);
+  delay(545); 
+  forward();
+}
+
 void turnLeft(){
   forwardMotor(EXTRA_FORWARD_TIME);
   servoIzq.write(180); 
@@ -117,6 +133,41 @@ void turnLeft(){
   delay(QUARTER_BACK_TIME); 
   forward();
 }
+
+
+void turn90Left(){
+  forwardMotor(EXTRA_FORWARD_TIME);
+  servoIzq.write(180); 
+  servoDer.write(180);
+  delay(545); 
+  forward();
+}
+
+// Estrategia probabilista
+void probabilisticSearch() {
+  seed = (a * seed + c) % m;//LCG
+  randomBit = (seed % 2); // Generar un bit pseudoaleatorio (0 o 1)
+  
+  if (randomBit == 1) {
+    // Gira a la derecha
+    turn90Right();
+    forwardMotor(400); // Avanzar 400 ms
+  } else {
+    // Gira a la izquierda
+    turn90Left();
+    forwardMotor(400); // Avanzar 400 ms
+  }
+}
+
+
+
+
+
+
+
+
+
+
 
 
 
