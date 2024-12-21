@@ -1,0 +1,37 @@
+Practica 4
+
+Ejercicio 1
+
+¿Cómo se hace girar el coche a la izquierda y a la derecha según el código?
+
+Para que el coche gire, se controla el movimiento de los motores de las ruedas mediante valores que van de 0 a 180 grados. Cada motor tiene un comportamiento diferente dependiendo de cómo está orientado:
+
+- Motor derecho (rueda derecha):
+  - 180: Avanza hacia adelante.
+  - 90: Se detiene.
+  - 0: Retrocede hacia atrás.
+
+- Motor izquierdo (rueda izquierda):
+  - 0: Avanza hacia adelante.
+  - 90: Se detiene.
+  - 180: Retrocede hacia atrás.
+
+Para realizar un giro:
+- Giro a la derecha: La rueda izquierda avanza (0) y la rueda derecha retrocede (0).
+- Giro a la izquierda: La rueda izquierda retrocede (180) y la rueda derecha avanza (180).
+
+Estos cambios de dirección se realizan llamando a las funciones turnLeft() o turnRight().
+
+¿Cómo se leen los valores digitales de los sensores? ¿Qué significan?
+
+Los sensores infrarrojos detectan si hay una línea negra en el suelo utilizando valores digitales (HIGH o LOW):
+- HIGH (línea detectada).
+- LOW (sin línea).
+
+El programa actualiza los valores de los sensores en el array irSensorValues mediante la función readIRSensor, que utiliza digitalRead() para leer los pines asignados:
+- irSensorValues[0]: Sensor izquierdo externo (pinIrIzqIzq, Pin 10).
+- irSensorValues[1]: Sensor izquierdo interno (pinIrIzq, Pin 2).
+- irSensorValues[2]: Sensor derecho interno (pinIrDer, Pin 3).
+- irSensorValues[3]: Sensor derecho externo (pinIrDerDer, Pin 11).
+
+Estos valores se usan para tomar decisiones sobre el movimiento del coche, como avanzar, detenerse o girar.

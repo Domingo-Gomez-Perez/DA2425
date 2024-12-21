@@ -458,7 +458,7 @@ Assume that the sequence is to be evaluated in the order in which it is
 presented.
 
 ```
-10
+10 ->
 
 (+ 5 3 4)
 
@@ -644,6 +644,8 @@ x/y^2 + 2y
 ----------
     3
 ```
+
+
 
 Use this formula to implement a cube-root procedure analogous to the
 square-root procedure.  In section 1.3.4 we will see how to implement
