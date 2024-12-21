@@ -22,11 +22,12 @@ def pon_en_env(x, y):
     env[x] = y
 
 
-env = {'+': lambda x, y: x+y,
-       '=': lambda x, y: x==y,
-       '*': lambda x, y: x*y,
-       '-': lambda x, y: x-y,
-    }
+env = {
+    '+': lambda x, y: x + y,
+    '-': lambda x, y: x - y,
+    '*': lambda x, y: x * y,
+    '=': lambda x, y: x == y,
+}
 
 def hacer_funcion(argumentos, cuerpo):
     def funcion(*valores):
@@ -38,7 +39,6 @@ def hacer_funcion(argumentos, cuerpo):
         return resultado
     return funcion
 
-
 def substitucion(exp, nombre, valor):
     if exp == nombre:
         return valor
@@ -46,8 +46,6 @@ def substitucion(exp, nombre, valor):
         return tuple(substitucion(e, nombre, valor) for e in exp)
     else:
         return exp
-
-
 
 # You will define the following procedure for evaluating an expression
 def seval(sexp):
@@ -62,21 +60,17 @@ def seval(sexp):
                 return seval(sexp[2])
             else:
                 return seval(sexp[3])
-            return 
         elif sexp[0] == 'lambda':
             args = sexp[1]
             body = sexp[2]
-            #print("Body", hacer_funcion(args, body))
             return hacer_funcion(args, body)
         
         elif sexp[0] == 'define':
             valor = seval(sexp[2])
-            return pon_en_env(sexp[1], valor)
-        
-            
+            pon_en_env(sexp[1], valor)
+            return
         func = seval(sexp[0])
         args = [seval(e) for e in sexp[1:]]
-        
         return func(*args)
 
 # In writing seval, you are ONLY allowed to use the rules of Scheme
@@ -92,4 +86,5 @@ assert seval('n') == 5
 
 # Now the ultimate test--can you run your procedure?
 seval(fact)
+print(seval(('fact', 'n')))
 assert seval(('fact', 'n')) == 120
