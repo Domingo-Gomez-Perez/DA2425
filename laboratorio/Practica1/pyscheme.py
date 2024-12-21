@@ -19,18 +19,25 @@ fact = ('define', 'fact',
 
 def pon_en_env(x, y):
     global env
-    env[x] = seval(y)
+    env[x] = y
 
 
-env = {'+': lambda x, y: x+y,
-    }
+env = {
+    '+': lambda x, y: x + y,
+    '-': lambda x, y: x - y,
+    '*': lambda x, y: x * y,
+    '=': lambda x, y: x == y,
+}
 
-def hacer_funcion(argumentos, cuerpo): # Equivalente de hacer una funcion
+def hacer_funcion(argumentos, cuerpo):
     def funcion(*valores):
+        old_env = env.copy()  
         for nombre, valor in zip(argumentos, valores):
-            cuerpo = substitucion(cuerpo, nombre, valor)
-        return cuerpo
-    return funcion # se devuelve un objeto funcion
+            env[nombre] = valor
+        resultado = seval(cuerpo)
+        env.update(old_env)
+        return resultado
+    return funcion
 
 def substitucion(exp, nombre, valor):
     if exp == nombre:
@@ -48,13 +55,19 @@ def seval(sexp):
         return env.get(sexp, sexp) 
     elif isinstance(sexp, tuple):
         if sexp[0] == 'if':
-            "completar"
-            return 
+            condicion = seval(sexp[1])
+            if condicion:
+                return seval(sexp[2])
+            else:
+                return seval(sexp[3])
         elif sexp[0] == 'lambda':
-            "completar"
-            return
+            args = sexp[1]
+            body = sexp[2]
+            return hacer_funcion(args, body)
+        
         elif sexp[0] == 'define':
-            "completar"
+            valor = seval(sexp[2])
+            pon_en_env(sexp[1], valor)
             return
         func = seval(sexp[0])
         args = [seval(e) for e in sexp[1:]]
@@ -72,5 +85,6 @@ seval(('define', 'n', 5))
 assert seval('n') == 5
 
 # Now the ultimate test--can you run your procedure?
-#seval(fact)
-#assert seval(('fact', 'n')) == 120
+seval(fact)
+print(seval(('fact', 'n')))
+assert seval(('fact', 'n')) == 120
